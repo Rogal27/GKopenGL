@@ -3,7 +3,7 @@
 #include <iostream>
 
 constexpr int WIDTH = 800;
-constexpr int HEIGHT = 600;
+constexpr int HEIGHT = 800;
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
@@ -42,8 +42,8 @@ int main()
         glfwPollEvents();
     }
 
-
-    glfwTerminate();
+    
+glfwTerminate();
 
     return 0;
 }

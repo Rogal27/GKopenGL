@@ -1,7 +1,4 @@
-
-
-#ifndef CAMERA_H
-#define CAMERA_H
+#pragma once
 
 #include <glad/glad.h>
 #include <glm/glm.hpp>
@@ -14,7 +11,9 @@ enum Camera_Movement {
     FORWARD,
     BACKWARD,
     LEFT,
-    RIGHT
+    RIGHT,
+    UP,
+    DOWN
 };
 
 // Default camera values
@@ -80,6 +79,10 @@ public:
             Position -= Right * velocity;
         if (direction == RIGHT)
             Position += Right * velocity;
+        if (direction == UP)
+            Position += Up * velocity;
+        if (direction == DOWN)
+            Position -= Up * velocity;
     }
 
     // Processes input received from a mouse input system. Expects the offset value in both the x and y direction.
@@ -130,5 +133,3 @@ private:
         Up = glm::normalize(glm::cross(Right, Front));
     }
 };
-#endif
-

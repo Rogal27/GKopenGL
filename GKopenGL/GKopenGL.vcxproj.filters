@@ -16,6 +16,12 @@
     <Filter Include="Shaders">
       <UniqueIdentifier>{24e21593-36e4-4a2c-80d6-dc1e34af0616}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Light">
+      <UniqueIdentifier>{9b2c6b19-c31b-4d87-8627-69caee7c44f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Light">
+      <UniqueIdentifier>{5da4ee91-62aa-490a-bdb1-6637a1a3517e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="window.cpp">
@@ -27,20 +33,56 @@
     <ClCompile Include="shader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="directLight.cpp">
+      <Filter>Source Files\Light</Filter>
+    </ClCompile>
+    <ClCompile Include="light.cpp">
+      <Filter>Source Files\Light</Filter>
+    </ClCompile>
+    <ClCompile Include="pointLight.cpp">
+      <Filter>Source Files\Light</Filter>
+    </ClCompile>
+    <ClCompile Include="spotLight.cpp">
+      <Filter>Source Files\Light</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="mouse.h">
+    <ClInclude Include="camera.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="light.h">
+      <Filter>Header Files\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="directLight.h">
+      <Filter>Header Files\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="spotLight.h">
+      <Filter>Header Files\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="pointLight.h">
+      <Filter>Header Files\Light</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="vertexShader.vert">
+    <None Include="lightFragmentShader.frag">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="fragmentShader.frag">
+    <None Include="lightVertexShader.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="phongFragmentShader.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="phongVertexShader.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="gouraudVertexShader.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="gouraudFragmentShader.frag">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

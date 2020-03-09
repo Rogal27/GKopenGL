@@ -151,17 +151,29 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="directLight.cpp" />
     <ClCompile Include="glad.c" />
+    <ClCompile Include="light.cpp" />
+    <ClCompile Include="pointLight.cpp" />
     <ClCompile Include="shader.cpp" />
+    <ClCompile Include="spotLight.cpp" />
     <ClCompile Include="window.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="mouse.h" />
+    <ClInclude Include="camera.h" />
+    <ClInclude Include="directLight.h" />
+    <ClInclude Include="light.h" />
+    <ClInclude Include="pointLight.h" />
     <ClInclude Include="shader.h" />
+    <ClInclude Include="spotLight.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="fragmentShader.frag" />
-    <None Include="vertexShader.vert" />
+    <None Include="gouraudFragmentShader.frag" />
+    <None Include="gouraudVertexShader.vert" />
+    <None Include="phongFragmentShader.frag" />
+    <None Include="lightFragmentShader.frag" />
+    <None Include="lightVertexShader.vert" />
+    <None Include="phongVertexShader.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

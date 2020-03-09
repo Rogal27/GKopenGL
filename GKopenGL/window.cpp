@@ -95,8 +95,8 @@ int main()
 
     //shader Program
     Shader shaders[2] = { Shader(phongVertexShaderPath, phongFragmentShaderPath) , Shader(gouraudVertexShaderPath, gouraudFragmentShaderPath) };
-    Shader phongShader(phongVertexShaderPath, phongFragmentShaderPath);
-    Shader gouraudShader(gouraudVertexShaderPath, gouraudFragmentShaderPath);
+    //Shader phongShader(phongVertexShaderPath, phongFragmentShaderPath);
+    //Shader gouraudShader(gouraudVertexShaderPath, gouraudFragmentShaderPath);
     Shader lampShader(lightVertexShaderPath, lightFragmentShaderPath);
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
@@ -179,8 +179,8 @@ int main()
 
 
     //light
-    PointLight light_point(lightPos);
-    SpotLight light_spot(camera.Position, camera.Front);
+    PointLight light_point(lightPos,1.0f,0.0f,0.0f);
+    //SpotLight light_spot(camera.Position, camera.Front);
     
     // render loop
     // -----------

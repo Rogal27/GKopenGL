@@ -85,5 +85,8 @@
     <None Include="gouraudFragmentShader.frag">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="simplePhong.frag">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

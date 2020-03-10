@@ -40,6 +40,8 @@ bool firstMouse = true;
 
 //light
 glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
+glm::vec3 lightPos2(1.2f, -1.0f, 2.0f);
+glm::vec3 lightPos3(0.2f, 1.0f, -2.0f);
 glm::vec3 lightColor(1.0f, 1.0f, 1.0f);
 
 //time
@@ -179,8 +181,11 @@ int main()
 
 
     //light
-    PointLight light_point(lightPos,1.0f,0.0f,0.0f);
-    //SpotLight light_spot(camera.Position, camera.Front);
+    PointLight light_point(lightPos);
+    PointLight light_point2(lightPos2);
+    PointLight light_point3(lightPos3);
+    SpotLight light_spot(camera.Position, camera.Front);
+    DirectLight light_dir(vec3(-0.2f, -1.0f, -0.3f));
     
     // render loop
     // -----------
@@ -214,10 +219,19 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         //move light
-        //lightPos.x = 1.0f + sin(glfwGetTime()) * 2.0f;
-        //lightPos.y = sin(glfwGetTime() / 2.0f) * 1.0f;
-        //light_point.setPosition(lightPos);
+        lightPos.x = 1.0f + sin(glfwGetTime()) * 2.0f;
+        lightPos.y = sin(glfwGetTime() / 2.0f) * 1.0f;
+        light_point.setPosition(lightPos);
 
+        float r = sin(glfwGetTime());
+        float g = cos(glfwGetTime());
+
+        light_point2.setColor(r * r, g * g, r * g + 0.5f);
+        light_point3.setColor(r * r, r * g + 0.5f, g*g);
+
+
+        light_spot.setPosition(camera.Position);
+        light_spot.setDirection(camera.Front);
 
         // be sure to activate shader when setting uniforms/drawing objects
         shaders[shader_type].use();
@@ -234,7 +248,7 @@ int main()
         glm::mat4 model = glm::mat4(1.0f);
         
 
-        glm::mat3 NormalMatrix = glm::mat3(glm::transpose(glm::inverse(view * model)));
+        glm::mat3 NormalMatrix = glm::mat3(glm::transpose(glm::inverse(model)));
 
         //vertex shader uniforms
         shaders[shader_type].setMat4("model", model);
@@ -243,14 +257,20 @@ int main()
         shaders[shader_type].setMat3("NormalMatrix", NormalMatrix);
         
         shaders[shader_type].setVec3("objectColor", 1.0f, 0.5f, 0.31f);
+        shaders[shader_type].setVec3("viewPos", camera.Position);
 
         //lights
         int dirLights = 0, pointLights = 0, spotLights = 0;
-        shaders[shader_type].setInt("dirLightsCount", 0);
-        shaders[shader_type].setInt("pointLightsCount", 1);
-        shaders[shader_type].setInt("spotLightsCount", 0);
+        shaders[shader_type].setInt("dirLightsCount", 1);
+        shaders[shader_type].setInt("pointLightsCount", 2);
+        shaders[shader_type].setInt("spotLightsCount", 1);
         
         light_point.setShaderUniforms(shaders[shader_type], dirLights, pointLights, spotLights);
+        light_point2.setShaderUniforms(shaders[shader_type], dirLights, pointLights, spotLights);
+        //light_point3.setShaderUniforms(shaders[shader_type], dirLights, pointLights, spotLights);
+        light_spot.setShaderUniforms(shaders[shader_type], dirLights, pointLights, spotLights);
+        light_dir.setShaderUniforms(shaders[shader_type], dirLights, pointLights, spotLights);
+
 
         // render the cube
         glBindVertexArray(cubeVAO);
@@ -264,6 +284,30 @@ int main()
         lampShader.setMat4("view", view);
         model = glm::mat4(1.0f);
         model = glm::translate(model, light_point.getPosition());
+        model = glm::scale(model, glm::vec3(0.2f)); // a smaller cube
+        lampShader.setMat4("model", model);
+
+        glBindVertexArray(lightVAO);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        lampShader.use();
+        lampShader.setVec3("lightColor", light_point2.getColor());
+        lampShader.setMat4("projection", projection);
+        lampShader.setMat4("view", view);
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, light_point2.getPosition());
+        model = glm::scale(model, glm::vec3(0.2f)); // a smaller cube
+        lampShader.setMat4("model", model);
+
+        glBindVertexArray(lightVAO);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        lampShader.use();
+        lampShader.setVec3("lightColor", light_point3.getColor());
+        lampShader.setMat4("projection", projection);
+        lampShader.setMat4("view", view);
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, light_point3.getPosition());
         model = glm::scale(model, glm::vec3(0.2f)); // a smaller cube
         lampShader.setMat4("model", model);
 

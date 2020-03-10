@@ -39,17 +39,19 @@ struct SpotLight {
     vec3 color;
 };
 
-uniform int dirLightsCount;
-uniform int pointLightsCount;
-uniform int spotLightsCount;
-
 #define NR_DIR_LIGHTS 16
 #define NR_POINT_LIGHTS 32
 #define NR_SPOT_LIGHTS 32
 
+uniform int dirLightsCount;
+uniform int pointLightsCount;
+uniform int spotLightsCount;
+
 uniform DirLight dirLights[NR_DIR_LIGHTS];
 uniform PointLight pointLights[NR_POINT_LIGHTS];
 uniform SpotLight spotLights[NR_SPOT_LIGHTS];
+
+uniform vec3 viewPos;
 
 in vec3 FragPos;
 in vec3 Normal;
@@ -65,17 +67,17 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 viewDir);
 void main()
 {
     vec3 norm = normalize(Normal);
-    vec3 viewDir = normalize(-FragPos);
+    vec3 viewDir = normalize(viewPos - FragPos);
 
     vec3 result = vec3(0.0f, 0.0f, 0.0f);
 
     //Directional Lights
-//    for(int i = 0; i < NR_DIR_LIGHTS; i++)
-//    {
-//        if(i >= dirLightsCount)
-//            break;
-//        result += CalcDirLight(dirLights[i], norm, viewDir);
-//    }
+    for(int i = 0; i < NR_DIR_LIGHTS; i++)
+    {
+        if(i >= dirLightsCount)
+            break;
+        result += CalcDirLight(dirLights[i], norm, viewDir);
+    }
     //Point Lights
     for(int i = 0; i < NR_POINT_LIGHTS; i++)
     {
@@ -84,12 +86,12 @@ void main()
         result += CalcPointLight(pointLights[i], norm, viewDir);
     }
     //Spot Lights
-//    for(int i = 0; i < NR_SPOT_LIGHTS; i++)
-//    {
-//        if(i >= spotLightsCount)
-//            break;
-//        result += CalcSpotLight(spotLights[i], norm, viewDir);
-//    }
+    for(int i = 0; i < NR_SPOT_LIGHTS; i++)
+    {
+        if(i >= spotLightsCount)
+            break;
+        result += CalcSpotLight(spotLights[i], norm, viewDir);
+    }
     
     FragColor = vec4(result * objectColor, 1.0);
 }  

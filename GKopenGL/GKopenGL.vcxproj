@@ -154,6 +154,8 @@
     <ClCompile Include="directLight.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="light.cpp" />
+    <ClCompile Include="mesh.cpp" />
+    <ClCompile Include="model.cpp" />
     <ClCompile Include="pointLight.cpp" />
     <ClCompile Include="shader.cpp" />
     <ClCompile Include="spotLight.cpp" />
@@ -163,6 +165,8 @@
     <ClInclude Include="camera.h" />
     <ClInclude Include="directLight.h" />
     <ClInclude Include="light.h" />
+    <ClInclude Include="mesh.h" />
+    <ClInclude Include="model.h" />
     <ClInclude Include="pointLight.h" />
     <ClInclude Include="shader.h" />
     <ClInclude Include="spotLight.h" />

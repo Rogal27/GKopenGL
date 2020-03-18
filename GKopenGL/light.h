@@ -8,6 +8,13 @@
 
 using namespace glm;
 
+enum class LightType
+{
+	Directional,
+	Point,
+	SpotLight
+};
+
 class Light
 {
 protected:

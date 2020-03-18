@@ -8,17 +8,30 @@
 
 using namespace std;
 
+enum class TextureType
+{
+    Diffuse,
+    Specular
+};
 
 struct Vertex {
+    // position
     glm::vec3 Position;
+    // normal
     glm::vec3 Normal;
+    // texCoords
     glm::vec2 TexCoords;
+    //// tangent
+    //glm::vec3 Tangent;
+    //// bitangent
+    //glm::vec3 Bitangent;
 };
 
 
 struct Texture {
     unsigned int id;
-    string type;
+    TextureType type;
+    string path;  // we store the path of the texture to compare with other textures
 };
 
 
@@ -30,8 +43,8 @@ public:
     vector<Texture> textures;
     /*  Functions  */
     Mesh(vector<Vertex> vertices, vector<unsigned int> indices, vector<Texture> textures);
-    ~Mesh();
-    void Draw(Shader shader);
+    void DeleteMesh();
+    void Draw(Shader& shader);
 private:
     /*  Render data  */
     unsigned int VAO;

@@ -22,11 +22,23 @@
     <Filter Include="Source Files\Light">
       <UniqueIdentifier>{5da4ee91-62aa-490a-bdb1-6637a1a3517e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Camera">
+      <UniqueIdentifier>{80ee186f-27c8-46e9-aca4-c40d66d3753c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Models">
+      <UniqueIdentifier>{7a3851e5-aee1-4885-bb0b-9d966827d798}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Camera">
+      <UniqueIdentifier>{c2427e4d-8a7c-417e-af7a-6b56e374f6fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Models">
+      <UniqueIdentifier>{eee6af15-e027-4e5e-a72c-e454e8159e69}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Main">
+      <UniqueIdentifier>{88c78d4f-15ee-4797-a62f-001eb94eded8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="window.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="glad.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -45,18 +57,27 @@
     <ClCompile Include="spotLight.cpp">
       <Filter>Source Files\Light</Filter>
     </ClCompile>
-    <ClCompile Include="mesh.cpp">
+    <ClCompile Include="stbi_image.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="camera.cpp">
+      <Filter>Source Files\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="mesh.cpp">
+      <Filter>Source Files\Models</Filter>
+    </ClCompile>
     <ClCompile Include="model.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Models</Filter>
+    </ClCompile>
+    <ClCompile Include="window.cpp">
+      <Filter>Source Files\Main</Filter>
+    </ClCompile>
+    <ClCompile Include="moveablecamera.cpp">
+      <Filter>Source Files\Camera</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="shader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="light.h">
@@ -71,11 +92,23 @@
     <ClInclude Include="pointLight.h">
       <Filter>Header Files\Light</Filter>
     </ClInclude>
-    <ClInclude Include="mesh.h">
+    <ClInclude Include="stb_image.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="camera.h">
+      <Filter>Header Files\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="moveablecamera.h">
+      <Filter>Header Files\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="mesh.h">
+      <Filter>Header Files\Models</Filter>
+    </ClInclude>
     <ClInclude Include="model.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="scene.h">
+      <Filter>Header Files\Models</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -98,6 +131,12 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="simplePhong.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="modelVertexShader.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="modelFragmentShader.frag">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

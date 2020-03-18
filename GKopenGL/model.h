@@ -7,24 +7,31 @@
 #include <vector>
 #include <iostream>
 
+#include "stb_image.h"
+
 #include "mesh.h"
 #include "shader.h"
+
+
 
 using namespace std;
 
 class Model
 {
 public:
-    Model(char* path);
-    void Draw(Shader shader);
-private:
-    /*  Model Data  */
     vector<Mesh> meshes;
     string directory;
-    /*  Functions   */
+    vector<Texture> textures_loaded;
+
+    //bool gammaCorrection;
+
+    Model(string path);
+    ~Model();
+    void Draw(Shader& shader);
+private:
     void loadModel(string path);
     void processNode(aiNode* node, const aiScene* scene);
     Mesh processMesh(aiMesh* mesh, const aiScene* scene);
-    vector<Texture> loadMaterialTextures(aiMaterial* mat, aiTextureType type,
-        string typeName);
+    vector<Texture> loadMaterialTextures(aiMaterial* mat, aiTextureType type, TextureType typeName);
+    unsigned int TextureFromFile(const char* path, const string& directory);
 };

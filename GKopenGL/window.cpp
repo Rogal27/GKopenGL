@@ -5,18 +5,25 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include <filesystem>
 #include <iostream>
+
+//#define STB_IMAGE_IMPLEMENTATION
+//#include "stb_image.h"
 
 #include "shader.h"
 #include "camera.h"
 #include "light.h"
 #include "directLight.h"
 #include "pointLight.h"
-#include  "spotLight.h"
+#include "spotLight.h"
+#include "model.h"
+
+namespace fs = std::filesystem;
 
 //window size
-constexpr int WIDTH = 800;
-constexpr int HEIGHT = 600;
+int WIDTH = 800;
+int HEIGHT = 600;
 
 constexpr double FPS = 1.0 / 60.0;
 
@@ -27,7 +34,11 @@ const char* gouraudVertexShaderPath = "gouraudVertexShader.vert";
 const char* gouraudFragmentShaderPath = "gouraudFragmentShader.frag";
 const char* lightVertexShaderPath = "lightVertexShader.vert";
 const char* lightFragmentShaderPath = "lightFragmentShader.frag";
+const char* modelVertexShaderPath = "modelVertexShader.vert";
+const char* modelFragmentShaderPath = "modelFragmentShader.frag";
 
+//models path
+const char* nanosuitModelPath = "models/objects/nanosuit/nanosuit.obj";
 
 //is some key pressed
 bool isPPressed = false;
@@ -96,7 +107,7 @@ int main()
     glEnable(GL_DEPTH_TEST);
 
     //shader Program
-    Shader shaders[2] = { Shader(phongVertexShaderPath, phongFragmentShaderPath) , Shader(gouraudVertexShaderPath, gouraudFragmentShaderPath) };
+    Shader shaders[2] = { Shader(phongVertexShaderPath, phongFragmentShaderPath) , Shader(modelVertexShaderPath, modelFragmentShaderPath) };
     //Shader phongShader(phongVertexShaderPath, phongFragmentShaderPath);
     //Shader gouraudShader(gouraudVertexShaderPath, gouraudFragmentShaderPath);
     Shader lampShader(lightVertexShaderPath, lightFragmentShaderPath);
@@ -186,6 +197,12 @@ int main()
     PointLight light_point3(lightPos3);
     SpotLight light_spot(camera.Position, camera.Front);
     DirectLight light_dir(vec3(-0.2f, -1.0f, -0.3f));
+
+    // load models
+    // -----------
+    //std::filesystem
+    fs::path path = fs::canonical(nanosuitModelPath);
+    Model ourModel(path.string());
     
     // render loop
     // -----------
@@ -240,13 +257,12 @@ int main()
       
 
         // view/projection transformations
-        glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)WIDTH / (float)HEIGHT, 0.1f, 100.0f);
+        glm::mat4 model = glm::mat4(1.0f);
+        glm::mat4 projection = camera.GetProjectionMatrix((float)WIDTH, (float)HEIGHT);
         glm::mat4 view = camera.GetViewMatrix();
         
 
-        // world transformation
-        glm::mat4 model = glm::mat4(1.0f);
-        
+        // world transformations
 
         glm::mat3 NormalMatrix = glm::mat3(glm::transpose(glm::inverse(model)));
 
@@ -256,26 +272,51 @@ int main()
         shaders[shader_type].setMat4("projection", projection);
         shaders[shader_type].setMat3("NormalMatrix", NormalMatrix);
         
-        shaders[shader_type].setVec3("objectColor", 1.0f, 0.5f, 0.31f);
+        //shaders[shader_type].setVec3("objectColor", 1.0f, 0.5f, 0.31f);
         shaders[shader_type].setVec3("viewPos", camera.Position);
 
         //lights
         int dirLights = 0, pointLights = 0, spotLights = 0;
         shaders[shader_type].setInt("dirLightsCount", 1);
-        shaders[shader_type].setInt("pointLightsCount", 2);
+        shaders[shader_type].setInt("pointLightsCount", 3);
         shaders[shader_type].setInt("spotLightsCount", 1);
         
         light_point.setShaderUniforms(shaders[shader_type], dirLights, pointLights, spotLights);
         light_point2.setShaderUniforms(shaders[shader_type], dirLights, pointLights, spotLights);
-        //light_point3.setShaderUniforms(shaders[shader_type], dirLights, pointLights, spotLights);
+        light_point3.setShaderUniforms(shaders[shader_type], dirLights, pointLights, spotLights);
         light_spot.setShaderUniforms(shaders[shader_type], dirLights, pointLights, spotLights);
         light_dir.setShaderUniforms(shaders[shader_type], dirLights, pointLights, spotLights);
 
 
         // render the cube
-        glBindVertexArray(cubeVAO);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
+        //glBindVertexArray(cubeVAO);
+        //glDrawArrays(GL_TRIANGLES, 0, 36);
 
+
+        // render the loaded model
+        
+        shaders[shader_type].setMat4("view", view);
+        shaders[shader_type].setMat4("projection", projection);
+
+        for (size_t i = 0; i < 10; i++)
+        {
+            for (size_t j = 0; j < 10; j++)
+            {
+                model = glm::mat4(1.0f);
+                model = glm::translate(model, glm::vec3(i, -1.75f, j)); // translate it down so it's at the center of the scene
+                model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));	// it's a bit too big for our scene, so scale it down
+                float angle = glfwGetTime() * 25.0f * i + j;
+                model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+                NormalMatrix = glm::mat3(glm::transpose(glm::inverse(model)));
+
+                shaders[shader_type].setMat4("model", model);
+
+                shaders[shader_type].setMat3("NormalMatrix", NormalMatrix);
+                ourModel.Draw(shaders[shader_type]);
+            }
+            
+        }
+        
 
         // also draw the lamp object
         lampShader.use();
@@ -346,6 +387,8 @@ int main()
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
     glViewport(0, 0, width, height);
+    WIDTH = width;
+    HEIGHT = height;
 }
 
 
@@ -355,17 +398,17 @@ void processInput(GLFWwindow* window)
 {
 
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        camera.ProcessKeyboard(FORWARD, deltaTime);
+        camera.ProcessKeyboard(CameraMovement::FORWARD, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        camera.ProcessKeyboard(BACKWARD, deltaTime);
+        camera.ProcessKeyboard(CameraMovement::BACKWARD, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        camera.ProcessKeyboard(LEFT, deltaTime);
+        camera.ProcessKeyboard(CameraMovement::LEFT, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        camera.ProcessKeyboard(RIGHT, deltaTime);
+        camera.ProcessKeyboard(CameraMovement::RIGHT, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-        camera.ProcessKeyboard(UP, deltaTime);
+        camera.ProcessKeyboard(CameraMovement::UP, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-        camera.ProcessKeyboard(DOWN, deltaTime);
+        camera.ProcessKeyboard(CameraMovement::DOWN, deltaTime);
 }
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
@@ -387,8 +430,17 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     }
     if (key == GLFW_KEY_O && action == GLFW_PRESS)
     {
-        shader_type++;
+        shader_type++; 
         shader_type %= 2;
+
+        if (shader_type == 0)
+        {
+            cout << "Phong shading" << endl;
+        }
+        else if (shader_type == 1)
+        {
+            cout << "Gouraud shading" << endl;
+        }
     }
 }
 

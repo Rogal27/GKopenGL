@@ -12,6 +12,7 @@
 //#include "stb_image.h"
 
 #include "shader.h"
+#include "shaderfactory.h"
 #include "camera.h"
 #include "moveablecamera.h"
 #include "light.h"
@@ -19,6 +20,8 @@
 #include "pointLight.h"
 #include "spotLight.h"
 #include "model.h"
+#include "scene.h"
+#include "scenefactory.h"
 
 namespace fs = std::filesystem;
 
@@ -29,24 +32,18 @@ int HEIGHT = 720;
 constexpr double FPS = 1.0 / 60.0;
 
 //shaders Path
-const char* phongVertexShaderPath = "phongVertexShader.vert";
-const char* phongFragmentShaderPath = "phongFragmentShader.frag";
-const char* gouraudVertexShaderPath = "gouraudVertexShader.vert";
-const char* gouraudFragmentShaderPath = "gouraudFragmentShader.frag";
-const char* lightVertexShaderPath = "lightVertexShader.vert";
-const char* lightFragmentShaderPath = "lightFragmentShader.frag";
-const char* modelVertexShaderPath = "modelVertexShader.vert";
-const char* modelFragmentShaderPath = "modelFragmentShader.frag";
+
 
 //models path
-const char* nanosuitModelPath = "models/objects/nanosuit/nanosuit.obj";
+
+Scene* mainScene = nullptr;
 
 //is some key pressed
 bool isPPressed = false;
 
 //camera
 //Camera camera(glm::vec3(3.0f, 0.0f, 3.0f), glm::vec3(0, 0, 0), glm::vec3(0.0f, 1.0f, 0.0f));
-MoveableCamera camera(glm::vec3(4.0f, 2.0f, 0.0f));
+//MoveableCamera camera(glm::vec3(4.0f, 2.0f, 0.0f));
 float lastX = WIDTH / 2.0f;
 float lastY = HEIGHT / 2.0f;
 bool firstMouse = true;
@@ -109,10 +106,10 @@ int main()
     glEnable(GL_DEPTH_TEST);
 
     //shader Program
-    Shader shaders[2] = { Shader(phongVertexShaderPath, phongFragmentShaderPath) , Shader(modelVertexShaderPath, modelFragmentShaderPath) };
+    //Shader shaders[2] = { Shader(shaderPath::phongVertexShaderPath, shaderPath::phongFragmentShaderPath) , Shader(shaderPath::modelVertexShaderPath, shaderPath::modelFragmentShaderPath) };
     //Shader phongShader(phongVertexShaderPath, phongFragmentShaderPath);
     //Shader gouraudShader(gouraudVertexShaderPath, gouraudFragmentShaderPath);
-    Shader lampShader(lightVertexShaderPath, lightFragmentShaderPath);
+    Shader lampShader(shaderPath::lightVertexShaderPath, shaderPath::lightFragmentShaderPath);
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
@@ -197,14 +194,19 @@ int main()
     PointLight light_point(lightPos);
     PointLight light_point2(lightPos2);
     PointLight light_point3(lightPos3);
-    SpotLight light_spot(camera.GetPosition(), camera.GetFront());
+    //SpotLight light_spot(camera.GetPosition(), camera.GetFront());
     DirectLight light_dir(vec3(-0.2f, -1.0f, -0.3f));
 
     // load models
     // -----------
     //std::filesystem
-    fs::path path = fs::canonical(nanosuitModelPath);
-    Model ourModel(path.string());
+    //fs::path path = fs::canonical(modelPath::nanosuitModelPath);
+    //Model ourModel(path.string());
+
+    SceneFactory sf = SceneFactory();
+
+    //scene
+    mainScene = sf.SimpleScene();
     
     // render loop
     // -----------
@@ -238,7 +240,7 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         //move light
-        lightPos.x = 1.0f + sin(glfwGetTime()) * 2.0f;
+       /* lightPos.x = 1.0f + sin(glfwGetTime()) * 2.0f;
         lightPos.y = sin(glfwGetTime() / 2.0f) * 1.0f;
         light_point.setPosition(lightPos);
 
@@ -250,71 +252,71 @@ int main()
 
 
         light_spot.setPosition(camera.GetPosition());
-        light_spot.setDirection(camera.GetFront());
+        light_spot.setDirection(camera.GetFront());*/
 
         // be sure to activate shader when setting uniforms/drawing objects
-        shaders[shader_type].use();
+        //shaders[shader_type].use();
         
 
       
 
         // view/projection transformations
-        glm::mat4 model = glm::mat4(1.0f);
+        /*glm::mat4 model = glm::mat4(1.0f);
         glm::mat4 projection = camera.GetProjectionMatrix((float)WIDTH, (float)HEIGHT);
-        glm::mat4 view = camera.GetViewMatrix();
+        glm::mat4 view = camera.GetViewMatrix();*/
         
 
         // world transformations
 
-        glm::mat3 NormalMatrix = glm::mat3(glm::transpose(glm::inverse(model)));
+        //glm::mat3 NormalMatrix = glm::mat3(glm::transpose(glm::inverse(model)));
 
         //vertex shader uniforms
-        shaders[shader_type].setMat4("model", model);
-        shaders[shader_type].setMat4("view", view);
-        shaders[shader_type].setMat4("projection", projection);
-        shaders[shader_type].setMat3("NormalMatrix", NormalMatrix);
+        //shaders[shader_type].setMat4("model", model);
+        //shaders[shader_type].setMat4("view", view);
+        //shaders[shader_type].setMat4("projection", projection);
+        //shaders[shader_type].setMat3("NormalMatrix", NormalMatrix);
         
         //shaders[shader_type].setVec3("objectColor", 1.0f, 0.5f, 0.31f);
-        shaders[shader_type].setVec3("viewPos", camera.GetPosition());
+        //shaders[shader_type].setVec3("viewPos", camera.GetPosition());
 
         //lights
-        int dirLights = 0, pointLights = 0, spotLights = 0;
-        shaders[shader_type].setInt("dirLightsCount", 1);
-        shaders[shader_type].setInt("pointLightsCount", 3);
-        shaders[shader_type].setInt("spotLightsCount", 1);
+        //int dirLights = 0, pointLights = 0, spotLights = 0;
+        //shaders[shader_type].setInt("dirLightsCount", 1);
+        //shaders[shader_type].setInt("pointLightsCount", 3);
+        //shaders[shader_type].setInt("spotLightsCount", 1);
         
-        light_point.setShaderUniforms(shaders[shader_type], dirLights, pointLights, spotLights);
-        light_point2.setShaderUniforms(shaders[shader_type], dirLights, pointLights, spotLights);
-        light_point3.setShaderUniforms(shaders[shader_type], dirLights, pointLights, spotLights);
-        light_spot.setShaderUniforms(shaders[shader_type], dirLights, pointLights, spotLights);
-        light_dir.setShaderUniforms(shaders[shader_type], dirLights, pointLights, spotLights);
+        //light_point.setShaderUniforms(shaders[shader_type], dirLights, pointLights, spotLights);
+        //light_point2.setShaderUniforms(shaders[shader_type], dirLights, pointLights, spotLights);
+        //light_point3.setShaderUniforms(shaders[shader_type], dirLights, pointLights, spotLights);
+        //light_spot.setShaderUniforms(shaders[shader_type], dirLights, pointLights, spotLights);
+        //light_dir.setShaderUniforms(shaders[shader_type], dirLights, pointLights, spotLights);
 
 
         // render the cube
 
-        model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(1.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
-        model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));	// it's a bit too big for our scene, so scale it down
-
-        shaders[shader_type].setMat4("model", model);
-
-        glBindVertexArray(cubeVAO);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-
-        model = glm::mat4(1.0f);
+        //model = glm::mat4(1.0f);
         //model = glm::translate(model, glm::vec3(1.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
-        model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));	// it's a bit too big for our scene, so scale it down
+        //model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));	// it's a bit too big for our scene, so scale it down
 
-        shaders[shader_type].setMat4("model", model);
+        //shaders[shader_type].setMat4("model", model);
 
-        glBindVertexArray(cubeVAO);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
+        //glBindVertexArray(cubeVAO);
+        //glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        //model = glm::mat4(1.0f);
+        ////model = glm::translate(model, glm::vec3(1.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
+        //model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));	// it's a bit too big for our scene, so scale it down
+
+        //shaders[shader_type].setMat4("model", model);
+
+        //glBindVertexArray(cubeVAO);
+        //glDrawArrays(GL_TRIANGLES, 0, 36);
 
 
         // render the loaded model
         
-        shaders[shader_type].setMat4("view", view);
-        shaders[shader_type].setMat4("projection", projection);
+        //shaders[shader_type].setMat4("view", view);
+        //shaders[shader_type].setMat4("projection", projection);
 
         //for (size_t i = 0; i < 10; i++)
         //{
@@ -334,6 +336,18 @@ int main()
         //    }
         //    
         //}        
+
+        //model
+        glm::mat4 model = glm::mat4(1.0f);
+
+        mainScene->Draw(WIDTH, HEIGHT, 0.0);
+
+        Camera* camera = mainScene->GetActiveCamera();
+        if (camera == nullptr)
+            continue;
+
+        glm::mat4 projection = camera->GetProjectionMatrix(WIDTH, HEIGHT);
+        glm::mat4 view = camera->GetViewMatrix();
 
         // also draw the lamp object
         lampShader.use();
@@ -383,7 +397,7 @@ int main()
             endFrame = glfwGetTime();
         }
     }
-
+    delete mainScene;
 
     // optional: de-allocate all resources once they've outlived their purpose:
     // ------------------------------------------------------------------------
@@ -413,18 +427,24 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 // ---------------------------------------------------------------------------------------------------------
 void processInput(GLFWwindow* window)
 {
+    if (mainScene == nullptr)
+        return;
+    Camera* camera = mainScene->GetActiveCamera();
+    if (camera == nullptr)
+        return;
+
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        camera.ProcessKeyboard(CameraMovement::FORWARD, deltaTime);
+        camera->ProcessKeyboard(CameraMovement::FORWARD, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        camera.ProcessKeyboard(CameraMovement::BACKWARD, deltaTime);
+        camera->ProcessKeyboard(CameraMovement::BACKWARD, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        camera.ProcessKeyboard(CameraMovement::LEFT, deltaTime);
+        camera->ProcessKeyboard(CameraMovement::LEFT, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        camera.ProcessKeyboard(CameraMovement::RIGHT, deltaTime);
+        camera->ProcessKeyboard(CameraMovement::RIGHT, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-        camera.ProcessKeyboard(CameraMovement::UP, deltaTime);
+        camera->ProcessKeyboard(CameraMovement::UP, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-        camera.ProcessKeyboard(CameraMovement::DOWN, deltaTime);
+        camera->ProcessKeyboard(CameraMovement::DOWN, deltaTime);
 }
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
@@ -458,6 +478,12 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
             cout << "Gouraud shading" << endl;
         }
     }
+    if (key == GLFW_KEY_C && action == GLFW_PRESS)
+    {
+        if (mainScene == nullptr)
+            return;
+        mainScene->SwitchCamera();
+    }
 }
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos)
@@ -475,10 +501,22 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
     lastX = xpos;
     lastY = ypos;
 
-    camera.ProcessMouseMovement(xoffset, yoffset);
+    if (mainScene == nullptr)
+        return;
+    Camera* camera = mainScene->GetActiveCamera();
+    if (camera == nullptr)
+        return;
+
+    camera->ProcessMouseMovement(xoffset, yoffset);
 }
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
-    camera.ProcessMouseScroll(yoffset);
+    if (mainScene == nullptr)
+        return;
+    Camera* camera = mainScene->GetActiveCamera();
+    if (camera == nullptr)
+        return;
+    
+    camera->ProcessMouseScroll(yoffset);
 }

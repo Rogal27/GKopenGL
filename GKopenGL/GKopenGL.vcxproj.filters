@@ -37,6 +37,9 @@
     <Filter Include="Source Files\Main">
       <UniqueIdentifier>{88c78d4f-15ee-4797-a62f-001eb94eded8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Shaders">
+      <UniqueIdentifier>{753cf5ca-254a-433a-be08-5e593bb1ba8e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="glad.c">
@@ -77,9 +80,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="shader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="light.h">
       <Filter>Header Files\Light</Filter>
     </ClInclude>
@@ -109,6 +109,15 @@
     </ClInclude>
     <ClInclude Include="scene.h">
       <Filter>Header Files\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="scenefactory.h">
+      <Filter>Header Files\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="shader.h">
+      <Filter>Header Files\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="shaderfactory.h">
+      <Filter>Header Files\Shaders</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

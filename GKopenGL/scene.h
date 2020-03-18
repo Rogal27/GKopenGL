@@ -11,17 +11,27 @@ class Scene
 {
 protected:
 	Shader shader;
-	vector<Camera> cameras;
+	vector<Camera*> cameras;
 	int activeCameraIndex;
 
 public:
-	vector<Model> models;
+	vector<Model*> models;
 
 	Scene(Shader shader);
-	virtual ~Scene() {}
-	void AddModel(Model& model);
+	virtual ~Scene()
+	{
+		for (Camera* camera : cameras)
+		{
+			delete camera;
+		}
+		for (Model* model : models)
+		{
+			delete model;
+		}
+	}
+	void AddModel(Model* model);
 	void SetShader(Shader shader);
-	void AddCamera(Camera& camera);
+	void AddCamera(Camera* camera);
 	bool SetActiveCamera(int index);
 	int GetCamerasCount();
 	void SwitchCamera();
@@ -44,7 +54,7 @@ public:
 class LightenScene : public Scene
 {
 protected:
-	vector<Light> lights;
+	vector<Light*> lights;
 	int dirLightsCount;
 	int pointLightsCount;
 	int spotLightsCount;
@@ -52,17 +62,23 @@ protected:
 
 public:
 	LightenScene(Shader shader);
-	virtual ~LightenScene() {}
+	virtual ~LightenScene()
+	{
+		for (Light* light : lights)
+		{
+			delete light;
+		}
+	}
 	virtual void Draw(float width, float height, double time) override;
-	void AddLight(Light& light, LightType type);
+	void AddLight(Light* light, LightType type);
 };
 
-Scene::Scene(Shader shader) : shader(shader)
+Scene::Scene(Shader shader) : shader(shader), activeCameraIndex(-1)
 {
 
 }
 
-void Scene::AddModel(Model& model)
+void Scene::AddModel(Model* model)
 {
 	models.push_back(model);
 }
@@ -72,7 +88,7 @@ void Scene::SetShader(Shader shader)
 	this->shader = shader;
 }
 
-void Scene::AddCamera(Camera& camera)
+void Scene::AddCamera(Camera* camera)
 {
 	if (cameras.size() == 0)
 		activeCameraIndex = 0;
@@ -89,9 +105,7 @@ bool Scene::SetActiveCamera(int index)
 
 Camera* Scene::GetActiveCamera()
 {
-	if (activeCameraIndex < 0 && activeCameraIndex >= cameras.size())
-		return nullptr;
-	return &cameras[activeCameraIndex];
+	return cameras[activeCameraIndex];
 }
 
 int Scene::GetCamerasCount()
@@ -116,6 +130,8 @@ void Scene::Draw(float width, float height, double time)
 	if (camera == nullptr)
 		return;
 
+	shader.use();
+
 	glm::mat4 modelMatrix = glm::mat4(1.0f);
 	glm::mat4 normalMatrix = glm::mat4(1.0f);
 	glm::mat4 projection = camera->GetProjectionMatrix(width, height);
@@ -123,18 +139,21 @@ void Scene::Draw(float width, float height, double time)
 
 	shader.setMat4("projection", projection);
 	shader.setMat4("view", view);
+	shader.setVec3("viewPos", camera->GetPosition());
 
-	for (auto model : models)
+	for (Model* model : models)
 	{
-		modelMatrix = model.GetModelMatrix();
-		normalMatrix = model.GetModelMatrix();
+		modelMatrix = model->GetModelMatrix();
+		normalMatrix = model->GetModelMatrix();
 
 		shader.setMat4("model", modelMatrix);
 		shader.setMat3("NormalMatrix", normalMatrix);
 
-        model.Draw(shader);
+        model->Draw(shader);
 	}
 }
+
+
 
 LightenScene::LightenScene(Shader shader) : Scene(shader)
 {
@@ -149,13 +168,13 @@ void LightenScene::SetUpLights()
 	shader.setInt("dirLightsCount", dirLightsCount);
 	shader.setInt("pointLightsCount", pointLightsCount);
 	shader.setInt("spotLightsCount", spotLightsCount);
-	for (auto l : lights)
+	for (Light* l : lights)
 	{
-		l.setShaderUniforms(shader, dirLights, pointLights, spotLights);
+		l->setShaderUniforms(shader, dirLights, pointLights, spotLights);
 	}
 }
 
-void LightenScene::AddLight(Light& light, LightType type)
+void LightenScene::AddLight(Light* light, LightType type)
 {
 	lights.push_back(light);
 	switch (type)
@@ -181,6 +200,7 @@ void LightenScene::Draw(float width, float height, double time)
 	Camera* camera = GetActiveCamera();
 	if (camera == nullptr)
 		return;
+	shader.use();
 
 	glm::mat4 modelMatrix = glm::mat4(1.0f);
 	glm::mat4 normalMatrix = glm::mat4(1.0f);
@@ -189,17 +209,18 @@ void LightenScene::Draw(float width, float height, double time)
 
 	shader.setMat4("projection", projection);
 	shader.setMat4("view", view);
+	shader.setVec3("viewPos", camera->GetPosition());
 
 	SetUpLights();
 
-	for (auto model : models)
+	for (Model* model : models)
 	{
-		modelMatrix = model.GetModelMatrix();
-		normalMatrix = model.GetModelMatrix();
+		modelMatrix = model->GetModelMatrix();
+		normalMatrix = model->GetModelMatrix();
 
 		shader.setMat4("model", modelMatrix);
 		shader.setMat3("NormalMatrix", normalMatrix);
 
-		model.Draw(shader);
+		model->Draw(shader);
 	}
 }

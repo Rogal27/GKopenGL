@@ -69,16 +69,6 @@ void MoveableCamera::ProcessMouseMovement(float xoffset, float yoffset, GLboolea
     updateCameraVectors();
 }
 
-// Processes input received from a mouse scroll-wheel event. Only requires input on the vertical wheel-axis
-void MoveableCamera::ProcessMouseScroll(float yoffset)
-{
-    if (fov >= 1.0f && fov <= 90.0f)
-        fov -= yoffset;
-    if (fov <= 1.0f)
-        fov = 1.0f;
-    if (fov >= 90.0f)
-        fov = 90.0f;
-}
 
 // Calculates the front vector from the Camera's (updated) Euler Angles
 void MoveableCamera::updateCameraVectors()

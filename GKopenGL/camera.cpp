@@ -59,3 +59,26 @@ void Camera::updateCameraVectors()
     Right = glm::normalize(glm::cross(WorldUp, -Front));
     Up = glm::cross(-Front, Right);
 }
+
+// Processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
+void Camera::ProcessKeyboard(CameraMovement direction, float deltaTime)
+{
+
+}
+
+// Processes input received from a mouse input system. Expects the offset value in both the x and y direction.
+void Camera::ProcessMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch)
+{
+
+}
+
+// Processes input received from a mouse scroll-wheel event. Only requires input on the vertical wheel-axis
+void Camera::ProcessMouseScroll(float yoffset)
+{
+    if (fov >= 1.0f && fov <= 90.0f)
+        fov -= yoffset;
+    if (fov <= 1.0f)
+        fov = 1.0f;
+    if (fov >= 90.0f)
+        fov = 90.0f;
+}

@@ -13,7 +13,7 @@ protected:
 	float MouseSensitivity;
 
 	// Calculates the front vector from the Camera's (updated) Euler Angles
-	void updateCameraVectors();
+	virtual void updateCameraVectors() override;
 public:
 	// Constructor with vectors
 	MoveableCamera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 worldUp = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = CameraConsts::YAW, float pitch = CameraConsts::PITCH);

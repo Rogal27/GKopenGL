@@ -2,6 +2,8 @@
 
 Model::Model(string path)
 {
+    modelMatrix = glm::mat4(1.0f);
+    normalMatrix = glm::mat4(1.0f);
     loadModel(path);
 }
 
@@ -30,6 +32,22 @@ void Model::loadModel(string path)
     directory = path.substr(0, path.find_last_of('\\'));
 
     processNode(scene->mRootNode, scene);
+}
+
+void Model::SetModelMatrix(glm::mat4 model)
+{
+    modelMatrix = model;
+    normalMatrix = glm::mat3(glm::transpose(glm::inverse(model)));
+}
+
+glm::mat4 Model::GetModelMatrix()
+{
+    return modelMatrix;
+}
+
+glm::mat3 Model::GetNormalMatrix()
+{
+    return normalMatrix;
 }
 
 void Model::processNode(aiNode* node, const aiScene* scene)

@@ -13,6 +13,7 @@
 
 #include "shader.h"
 #include "camera.h"
+#include "moveablecamera.h"
 #include "light.h"
 #include "directLight.h"
 #include "pointLight.h"
@@ -22,8 +23,8 @@
 namespace fs = std::filesystem;
 
 //window size
-int WIDTH = 800;
-int HEIGHT = 600;
+int WIDTH = 1280;
+int HEIGHT = 720;
 
 constexpr double FPS = 1.0 / 60.0;
 
@@ -44,7 +45,8 @@ const char* nanosuitModelPath = "models/objects/nanosuit/nanosuit.obj";
 bool isPPressed = false;
 
 //camera
-Camera camera(glm::vec3(1.0f, 2.0f, 4.0f));
+//Camera camera(glm::vec3(3.0f, 0.0f, 3.0f), glm::vec3(0, 0, 0), glm::vec3(0.0f, 1.0f, 0.0f));
+MoveableCamera camera(glm::vec3(4.0f, 2.0f, 0.0f));
 float lastX = WIDTH / 2.0f;
 float lastY = HEIGHT / 2.0f;
 bool firstMouse = true;
@@ -195,7 +197,7 @@ int main()
     PointLight light_point(lightPos);
     PointLight light_point2(lightPos2);
     PointLight light_point3(lightPos3);
-    SpotLight light_spot(camera.Position, camera.Front);
+    SpotLight light_spot(camera.GetPosition(), camera.GetFront());
     DirectLight light_dir(vec3(-0.2f, -1.0f, -0.3f));
 
     // load models
@@ -247,8 +249,8 @@ int main()
         light_point3.setColor(r * r, r * g + 0.5f, g*g);
 
 
-        light_spot.setPosition(camera.Position);
-        light_spot.setDirection(camera.Front);
+        light_spot.setPosition(camera.GetPosition());
+        light_spot.setDirection(camera.GetFront());
 
         // be sure to activate shader when setting uniforms/drawing objects
         shaders[shader_type].use();
@@ -273,7 +275,7 @@ int main()
         shaders[shader_type].setMat3("NormalMatrix", NormalMatrix);
         
         //shaders[shader_type].setVec3("objectColor", 1.0f, 0.5f, 0.31f);
-        shaders[shader_type].setVec3("viewPos", camera.Position);
+        shaders[shader_type].setVec3("viewPos", camera.GetPosition());
 
         //lights
         int dirLights = 0, pointLights = 0, spotLights = 0;
@@ -289,8 +291,24 @@ int main()
 
 
         // render the cube
-        //glBindVertexArray(cubeVAO);
-        //glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(1.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
+        model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));	// it's a bit too big for our scene, so scale it down
+
+        shaders[shader_type].setMat4("model", model);
+
+        glBindVertexArray(cubeVAO);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        model = glm::mat4(1.0f);
+        //model = glm::translate(model, glm::vec3(1.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
+        model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));	// it's a bit too big for our scene, so scale it down
+
+        shaders[shader_type].setMat4("model", model);
+
+        glBindVertexArray(cubeVAO);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
 
 
         // render the loaded model
@@ -298,25 +316,24 @@ int main()
         shaders[shader_type].setMat4("view", view);
         shaders[shader_type].setMat4("projection", projection);
 
-        for (size_t i = 0; i < 10; i++)
-        {
-            for (size_t j = 0; j < 10; j++)
-            {
-                model = glm::mat4(1.0f);
-                model = glm::translate(model, glm::vec3(i, -1.75f, j)); // translate it down so it's at the center of the scene
-                model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));	// it's a bit too big for our scene, so scale it down
-                float angle = glfwGetTime() * 25.0f * i + j;
-                model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-                NormalMatrix = glm::mat3(glm::transpose(glm::inverse(model)));
+        //for (size_t i = 0; i < 10; i++)
+        //{
+        //    for (size_t j = 0; j < 10; j++)
+        //    {
+        //        model = glm::mat4(1.0f);
+        //        model = glm::translate(model, glm::vec3(i, -1.75f, j)); // translate it down so it's at the center of the scene
+        //        model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));	// it's a bit too big for our scene, so scale it down
+        //        float angle = glfwGetTime() * 25.0f * i + j;
+        //        model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+        //        NormalMatrix = glm::mat3(glm::transpose(glm::inverse(model)));
 
-                shaders[shader_type].setMat4("model", model);
+        //        shaders[shader_type].setMat4("model", model);
 
-                shaders[shader_type].setMat3("NormalMatrix", NormalMatrix);
-                ourModel.Draw(shaders[shader_type]);
-            }
-            
-        }
-        
+        //        shaders[shader_type].setMat3("NormalMatrix", NormalMatrix);
+        //        ourModel.Draw(shaders[shader_type]);
+        //    }
+        //    
+        //}        
 
         // also draw the lamp object
         lampShader.use();
@@ -396,7 +413,6 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 // ---------------------------------------------------------------------------------------------------------
 void processInput(GLFWwindow* window)
 {
-
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
         camera.ProcessKeyboard(CameraMovement::FORWARD, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)

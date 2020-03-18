@@ -19,8 +19,8 @@ enum class CameraMovement {
 namespace CameraConsts
 {
     // Default camera values
-    const float YAW = -90.0f;
-    const float PITCH = 0.0f;
+    const float YAW = 180.0f;
+    const float PITCH = -10.0f;
     const float SPEED = 2.5f;
     const float SENSITIVITY = 0.1f;
     const float FOV = 45.0f;
@@ -34,24 +34,33 @@ class Camera
 {
 protected:
     Camera();
-public:
+
     // Camera Attributes
     glm::vec3 Position;
     glm::vec3 Front;
     glm::vec3 Up;
     glm::vec3 Right;
     glm::vec3 WorldUp;
+    glm::vec3 CameraTarget;
 
     //camera options
     float near_plane;
     float far_plane;
     float fov;
 
-    
+    virtual void updateCameraVectors();
+public:    
     // Constructor with vectors
     Camera(glm::vec3 position, glm::vec3 cameraTarget, glm::vec3 worldUp);
 
     virtual ~Camera() {}
+
+    void ChangePosition(glm::vec3 position);
+    void ChangeTarget(glm::vec3 cameraTarget);
+    void FollowObject(glm::vec3 targetPosition, glm::vec3 cameraToTarget);
+
+    glm::vec3 GetPosition();
+    glm::vec3 GetFront();
 
     // Returns projection matrix
     glm::mat4 GetProjectionMatrix(float width, float height);

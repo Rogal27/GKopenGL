@@ -10,12 +10,13 @@
 class Scene
 {
 protected:
-	vector<Model> models;
 	Shader shader;
-
 	vector<Camera> cameras;
 	int activeCameraIndex;
+
 public:
+	vector<Model> models;
+
 	Scene(Shader shader);
 	virtual ~Scene() {}
 	void AddModel(Model& model);
@@ -25,11 +26,22 @@ public:
 	int GetCamerasCount();
 	void SwitchCamera();
 	Camera* GetActiveCamera();
-	virtual void Draw();
+	virtual void Draw(float width, float height, double time);
 };
 
+//class LightOnlyScene : public Scene
+//{
+//protected:
+//	vector<Light> lights;
+//public:
+//	LightOnlyScene(Shader shader);
+//	virtual ~LightOnlyScene() {}
+//	void AddLight(Light& light, LightType type);
+//	virtual void Draw(float width, float height, double time) override;
+//};
 
-class LightScene : public Scene
+
+class LightenScene : public Scene
 {
 protected:
 	vector<Light> lights;
@@ -37,13 +49,12 @@ protected:
 	int pointLightsCount;
 	int spotLightsCount;
 	void SetUpLights();
-public:
-	LightScene(Shader shader);
-	virtual ~LightScene() {}
-	virtual void Draw() override;
-	void AddLight(Light& light, LightType type);
-	
 
+public:
+	LightenScene(Shader shader);
+	virtual ~LightenScene() {}
+	virtual void Draw(float width, float height, double time) override;
+	void AddLight(Light& light, LightType type);
 };
 
 Scene::Scene(Shader shader) : shader(shader)
@@ -96,21 +107,43 @@ void Scene::SwitchCamera()
 	activeCameraIndex %= cameras.size();
 }
 
-void Scene::Draw()
+void Scene::Draw(float width, float height, double time)
 {
 	if (cameras.size() == 0)
 		return;
 
+	Camera* camera = GetActiveCamera();
+	if (camera == nullptr)
+		return;
+
+	glm::mat4 modelMatrix = glm::mat4(1.0f);
+	glm::mat4 normalMatrix = glm::mat4(1.0f);
+	glm::mat4 projection = camera->GetProjectionMatrix(width, height);
+	glm::mat4 view = camera->GetViewMatrix();
+
+	shader.setMat4("projection", projection);
+	shader.setMat4("view", view);
+
+	for (auto model : models)
+	{
+		modelMatrix = model.GetModelMatrix();
+		normalMatrix = model.GetModelMatrix();
+
+		shader.setMat4("model", modelMatrix);
+		shader.setMat3("NormalMatrix", normalMatrix);
+
+        model.Draw(shader);
+	}
 }
 
-LightScene::LightScene(Shader shader) : Scene(shader)
+LightenScene::LightenScene(Shader shader) : Scene(shader)
 {
 	dirLightsCount = 0;
 	pointLightsCount = 0;
 	spotLightsCount = 0;
 }
 
-void LightScene::SetUpLights()
+void LightenScene::SetUpLights()
 {
 	int dirLights = 0, pointLights = 0, spotLights = 0;
 	shader.setInt("dirLightsCount", dirLightsCount);
@@ -122,7 +155,7 @@ void LightScene::SetUpLights()
 	}
 }
 
-void LightScene::AddLight(Light& light, LightType type)
+void LightenScene::AddLight(Light& light, LightType type)
 {
 	lights.push_back(light);
 	switch (type)
@@ -139,3 +172,34 @@ void LightScene::AddLight(Light& light, LightType type)
 	}
 }
 
+
+void LightenScene::Draw(float width, float height, double time)
+{
+	if (cameras.size() == 0)
+		return;
+
+	Camera* camera = GetActiveCamera();
+	if (camera == nullptr)
+		return;
+
+	glm::mat4 modelMatrix = glm::mat4(1.0f);
+	glm::mat4 normalMatrix = glm::mat4(1.0f);
+	glm::mat4 projection = camera->GetProjectionMatrix(width, height);
+	glm::mat4 view = camera->GetViewMatrix();
+
+	shader.setMat4("projection", projection);
+	shader.setMat4("view", view);
+
+	SetUpLights();
+
+	for (auto model : models)
+	{
+		modelMatrix = model.GetModelMatrix();
+		normalMatrix = model.GetModelMatrix();
+
+		shader.setMat4("model", modelMatrix);
+		shader.setMat3("NormalMatrix", normalMatrix);
+
+		model.Draw(shader);
+	}
+}

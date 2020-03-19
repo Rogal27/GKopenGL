@@ -1,10 +1,9 @@
 #pragma once
 
 #include <glm/glm.hpp>
-#include <iostream>
 #include <vector>
 
-#include "shader.h"
+class Shader;
 
 using namespace std;
 

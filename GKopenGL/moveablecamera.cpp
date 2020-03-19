@@ -1,4 +1,5 @@
 #include "moveablecamera.h"
+#include "camera.h"
 
 // Constructor with vectors
 MoveableCamera::MoveableCamera(glm::vec3 position, glm::vec3 worldUp, float yaw, float pitch) :
@@ -38,6 +39,7 @@ void MoveableCamera::ProcessKeyboard(CameraMovement direction, float deltaTime)
         break;
     case CameraMovement::UP:
         Position += WorldUp * velocity;
+        //Position.y += 100*WorldUp.y;
         break;
     case CameraMovement::DOWN:
         Position -= WorldUp * velocity;

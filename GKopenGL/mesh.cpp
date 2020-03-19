@@ -1,4 +1,9 @@
+#include <iostream>
+#include <string>
+#include <glad/glad.h>
+
 #include "mesh.h"
+#include "shader.h"
 
 Mesh::Mesh(vector<Vertex> vertices, vector<unsigned int> indices, vector<Texture> textures)
 {

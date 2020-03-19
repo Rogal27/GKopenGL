@@ -1,20 +1,20 @@
 #pragma once
 
-#include <assimp/Importer.hpp>
 #include <assimp/scene.h>
-#include <assimp/postprocess.h>
 
 #include <vector>
 #include <iostream>
 
-#include "stb_image.h"
-
-#include "mesh.h"
-#include "shader.h"
+#include <glm/glm.hpp>
 
 
+class Mesh;
+struct Texture;
+class Shader;
+enum class TextureType;
 
 using namespace std;
+
 
 class Model
 {

@@ -1,4 +1,5 @@
 #include "light.h"
+#include "shader.h"
 
 Light::Light(vec3 _color, vec3 _ambient, vec3 _diffuse, vec3 _specular):
 	color(_color), ambient(_ambient), diffuse(_diffuse), specular(_specular)

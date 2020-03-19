@@ -1,4 +1,18 @@
+#include <glad/glad.h>
+#include <assimp/Importer.hpp>
+#include <assimp/postprocess.h>
+
 #include "model.h"
+#include "mesh.h"
+#include "shader.h"
+
+#include "stb_image.h"
+
+namespace texturesPath
+{
+    const char* EmptySpecularDirectoryPath = "models/textures";
+    const char* EmptySpecularFileName = "empty_specular.jpg";
+}
 
 Model::Model(string path)
 {
@@ -15,6 +29,9 @@ Model::~Model()
 
 void Model::Draw(Shader& shader)
 {
+    shader.setMat4("model", modelMatrix);
+    shader.setMat3("NormalMatrix", normalMatrix);
+
     for (unsigned int i = 0; i < meshes.size(); i++)
         meshes[i].Draw(shader);
 }
@@ -76,7 +93,7 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
     for (unsigned int i = 0; i < mesh->mNumVertices; i++)
     {
         Vertex vertex;
-        glm::vec3 vector; // we declare a placeholder vector since assimp uses its own vector class that doesn't directly convert to glm's vec3 class so we transfer the data to this placeholder glm::vec3 first.
+        glm::vec3 vector;
         // positions
         vector.x = mesh->mVertices[i].x;
         vector.y = mesh->mVertices[i].y;
@@ -88,11 +105,9 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
         vector.z = mesh->mNormals[i].z;
         vertex.Normal = vector;
         // texture coordinates
-        if (mesh->mTextureCoords[0]) // does the mesh contain texture coordinates?
+        if (mesh->mTextureCoords[0])
         {
             glm::vec2 vec;
-            // a vertex can contain up to 8 different texture coordinates. We thus make the assumption that we won't 
-            // use models where a vertex can have multiple texture coordinates so we always take the first set (0).
             vec.x = mesh->mTextureCoords[0][i].x;
             vec.y = mesh->mTextureCoords[0][i].y;
             vertex.TexCoords = vec;
@@ -121,18 +136,19 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
     }
     // process materials
     aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
-    // we assume a convention for sampler names in the shaders. Each diffuse texture should be named
-    // as 'texture_diffuseN' where N is a sequential number ranging from 1 to MAX_SAMPLER_NUMBER. 
-    // Same applies to other texture as the following list summarizes:
-    // diffuse: texture_diffuseN
-    // specular: texture_specularN
-    // normal: texture_normalN
 
     // 1. diffuse maps
     vector<Texture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, TextureType::Diffuse);
     textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
     // 2. specular maps
     vector<Texture> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, TextureType::Specular);
+    if (specularMaps.size() == 0)
+    {
+        Texture texture;
+        texture.id = TextureFromFile(texturesPath::EmptySpecularFileName, texturesPath::EmptySpecularDirectoryPath);
+        texture.type = TextureType::Specular;
+        texture.path = string(texturesPath::EmptySpecularDirectoryPath) + "/" + string(texturesPath::EmptySpecularFileName);
+    }
     textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
     //// 3. normal maps
     //std::vector<Texture> normalMaps = loadMaterialTextures(material, aiTextureType_HEIGHT, "texture_normal");
@@ -183,6 +199,8 @@ unsigned int Model::TextureFromFile(const char* path, const string& directory)
     string filename = string(path);
     filename = directory + '/' + filename;
 
+    std::cout << "loading texture from file: " + filename << endl;
+
     unsigned int textureID;
     glGenTextures(1, &textureID);
 
@@ -190,7 +208,7 @@ unsigned int Model::TextureFromFile(const char* path, const string& directory)
     unsigned char* data = stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);
     if (data)
     {
-        GLenum format;
+        GLenum format = GL_RGB;
         if (nrComponents == 1)
             format = GL_RED;
         else if (nrComponents == 3)

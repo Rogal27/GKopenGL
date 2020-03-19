@@ -1,6 +1,9 @@
-#pragma once
+#include <iostream>
+#include <string>
 
-#include "directLight.h"
+#include "directlight.h"
+#include "light.h"
+#include "shader.h"
 
 DirectLight::DirectLight(vec3 _direction, vec3 _color, vec3 _ambient, vec3 _diffuse, vec3 _specular): 
 	Light(_color, _ambient,_diffuse,_specular), direction(_direction)

@@ -1,5 +1,9 @@
-#pragma once
-#include "spotLight.h"
+#include <iostream>
+#include <string>
+
+#include "spotlight.h"
+#include "light.h"
+#include "shader.h"
 
 SpotLight::SpotLight(vec3 _position, vec3 _direction, float _cutOff, float _outerCutOff, float _constant, float _linear, float _quadratic, vec3 _color, vec3 _ambient, vec3 _diffuse, vec3 _specular):
 	Light(_color, _ambient, _diffuse, _specular), position(_position), direction(_direction), constant(_constant), linear(_linear), quadratic(_quadratic)

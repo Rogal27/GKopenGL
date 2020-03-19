@@ -40,28 +40,22 @@
     <Filter Include="Header Files\Shaders">
       <UniqueIdentifier>{753cf5ca-254a-433a-be08-5e593bb1ba8e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Shaders">
+      <UniqueIdentifier>{67967b48-b894-4b2c-8fd7-e14edb8c6ca7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Stb">
+      <UniqueIdentifier>{aadf567f-c3f4-4e93-822f-e4a02ad5a141}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Stb">
+      <UniqueIdentifier>{e636852f-6976-4b59-9f42-c67ef81a62a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Glad">
+      <UniqueIdentifier>{f9423c9b-19ff-4059-8b10-d003819bdc34}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="glad.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="shader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="directLight.cpp">
-      <Filter>Source Files\Light</Filter>
-    </ClCompile>
     <ClCompile Include="light.cpp">
       <Filter>Source Files\Light</Filter>
-    </ClCompile>
-    <ClCompile Include="pointLight.cpp">
-      <Filter>Source Files\Light</Filter>
-    </ClCompile>
-    <ClCompile Include="spotLight.cpp">
-      <Filter>Source Files\Light</Filter>
-    </ClCompile>
-    <ClCompile Include="stbi_image.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="camera.cpp">
       <Filter>Source Files\Camera</Filter>
@@ -78,22 +72,40 @@
     <ClCompile Include="moveablecamera.cpp">
       <Filter>Source Files\Camera</Filter>
     </ClCompile>
+    <ClCompile Include="scene.cpp">
+      <Filter>Source Files\Models</Filter>
+    </ClCompile>
+    <ClCompile Include="lightenscene.cpp">
+      <Filter>Source Files\Models</Filter>
+    </ClCompile>
+    <ClCompile Include="spotlight.cpp">
+      <Filter>Source Files\Light</Filter>
+    </ClCompile>
+    <ClCompile Include="pointlight.cpp">
+      <Filter>Source Files\Light</Filter>
+    </ClCompile>
+    <ClCompile Include="directlight.cpp">
+      <Filter>Source Files\Light</Filter>
+    </ClCompile>
+    <ClCompile Include="shader.cpp">
+      <Filter>Source Files\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="scenefactory.cpp">
+      <Filter>Source Files\Models</Filter>
+    </ClCompile>
+    <ClCompile Include="stbi_image.cpp">
+      <Filter>Source Files\Stb</Filter>
+    </ClCompile>
+    <ClCompile Include="glad.c">
+      <Filter>Source Files\Glad</Filter>
+    </ClCompile>
+    <ClCompile Include="shaderfactory.cpp">
+      <Filter>Source Files\Shaders</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="light.h">
       <Filter>Header Files\Light</Filter>
-    </ClInclude>
-    <ClInclude Include="directLight.h">
-      <Filter>Header Files\Light</Filter>
-    </ClInclude>
-    <ClInclude Include="spotLight.h">
-      <Filter>Header Files\Light</Filter>
-    </ClInclude>
-    <ClInclude Include="pointLight.h">
-      <Filter>Header Files\Light</Filter>
-    </ClInclude>
-    <ClInclude Include="stb_image.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="camera.h">
       <Filter>Header Files\Camera</Filter>
@@ -118,6 +130,21 @@
     </ClInclude>
     <ClInclude Include="shaderfactory.h">
       <Filter>Header Files\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="lightenscene.h">
+      <Filter>Header Files\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="directlight.h">
+      <Filter>Header Files\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="pointlight.h">
+      <Filter>Header Files\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="spotlight.h">
+      <Filter>Header Files\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="stb_image.h">
+      <Filter>Header Files\Stb</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

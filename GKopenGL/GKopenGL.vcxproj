@@ -153,31 +153,36 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="camera.cpp" />
-    <ClCompile Include="directLight.cpp" />
+    <ClCompile Include="directlight.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="light.cpp" />
+    <ClCompile Include="lightenscene.cpp" />
     <ClCompile Include="mesh.cpp" />
     <ClCompile Include="model.cpp" />
     <ClCompile Include="moveablecamera.cpp" />
-    <ClCompile Include="pointLight.cpp" />
+    <ClCompile Include="pointlight.cpp" />
+    <ClCompile Include="scene.cpp" />
+    <ClCompile Include="scenefactory.cpp" />
     <ClCompile Include="shader.cpp" />
-    <ClCompile Include="spotLight.cpp" />
+    <ClCompile Include="shaderfactory.cpp" />
+    <ClCompile Include="spotlight.cpp" />
     <ClCompile Include="stbi_image.cpp" />
     <ClCompile Include="window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h" />
-    <ClInclude Include="directLight.h" />
+    <ClInclude Include="directlight.h" />
     <ClInclude Include="light.h" />
+    <ClInclude Include="lightenscene.h" />
     <ClInclude Include="mesh.h" />
     <ClInclude Include="model.h" />
     <ClInclude Include="moveablecamera.h" />
-    <ClInclude Include="pointLight.h" />
+    <ClInclude Include="pointlight.h" />
     <ClInclude Include="scene.h" />
     <ClInclude Include="scenefactory.h" />
     <ClInclude Include="shader.h" />
     <ClInclude Include="shaderfactory.h" />
-    <ClInclude Include="spotLight.h" />
+    <ClInclude Include="spotlight.h" />
     <ClInclude Include="stb_image.h" />
   </ItemGroup>
   <ItemGroup>

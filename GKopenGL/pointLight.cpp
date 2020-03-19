@@ -1,5 +1,9 @@
-#pragma once
-#include "pointLight.h"
+#include <iostream>
+#include <string>
+
+#include "pointlight.h"
+#include "light.h"
+#include "shader.h"
 
 PointLight::PointLight(vec3 _position, float _constant, float _linear, float _quadratic, vec3 _color, vec3 _ambient, vec3 _diffuse, vec3 _specular):
 	Light(_color, _ambient, _diffuse, _specular), position(_position), constant(_constant), linear(_linear), quadratic(_quadratic)

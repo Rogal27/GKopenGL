@@ -2,6 +2,8 @@
 
 #include "light.h"
 
+class Shader;
+
 using namespace glm;
 
 class PointLight : public Light

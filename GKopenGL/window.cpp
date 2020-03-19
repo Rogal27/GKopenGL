@@ -109,7 +109,9 @@ int main()
     //Shader shaders[2] = { Shader(shaderPath::phongVertexShaderPath, shaderPath::phongFragmentShaderPath) , Shader(shaderPath::modelVertexShaderPath, shaderPath::modelFragmentShaderPath) };
     //Shader phongShader(phongVertexShaderPath, phongFragmentShaderPath);
     //Shader gouraudShader(gouraudVertexShaderPath, gouraudFragmentShaderPath);
-    Shader lampShader(shaderPath::lightVertexShaderPath, shaderPath::lightFragmentShaderPath);
+    ShaderFactory& shaderfactory = ShaderFactory::getInstance();
+
+    Shader lampShader = shaderfactory.getShader(ShaderType::light);
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
@@ -236,7 +238,7 @@ int main()
 
         // render
         // ------
-        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+        glClearColor(0.5f, 0.8f, 0.95f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         //move light

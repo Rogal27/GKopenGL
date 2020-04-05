@@ -95,6 +95,8 @@ int main()
 
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
+    glfwSwapInterval(1);
+
     // glad: load all OpenGL function pointers
     // ---------------------------------------
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -393,11 +395,11 @@ int main()
         glfwSwapBuffers(window);
         glfwPollEvents();
 
-        double endFrame = glfwGetTime();
+        /*double endFrame = glfwGetTime();
         while (endFrame - currentFrame < FPS)
         {
             endFrame = glfwGetTime();
-        }
+        }*/
     }
     delete mainScene;
 
@@ -485,6 +487,10 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         if (mainScene == nullptr)
             return;
         mainScene->SwitchCamera();
+    }
+    if (key == GLFW_KEY_B && action == GLFW_PRESS)
+    {
+        ;
     }
 }
 

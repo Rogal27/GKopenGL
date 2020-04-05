@@ -144,10 +144,26 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
     vector<Texture> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, TextureType::Specular);
     if (specularMaps.size() == 0)
     {
-        Texture texture;
-        texture.id = TextureFromFile(texturesPath::EmptySpecularFileName, texturesPath::EmptySpecularDirectoryPath);
-        texture.type = TextureType::Specular;
-        texture.path = string(texturesPath::EmptySpecularDirectoryPath) + "/" + string(texturesPath::EmptySpecularFileName);
+        bool skip = false;
+        string str = string(texturesPath::EmptySpecularDirectoryPath) + "/" + string(texturesPath::EmptySpecularFileName);
+        for (size_t i = 0; i < textures_loaded.size(); i++)
+        {
+            if (textures_loaded[i].path.compare(str) == 0)
+            {
+                textures.push_back(textures_loaded[i]);
+                skip = true;
+                break;
+            }
+        }
+        if (skip == false)
+        {
+            Texture texture;
+            texture.id = TextureFromFile(texturesPath::EmptySpecularFileName, texturesPath::EmptySpecularDirectoryPath);
+            texture.type = TextureType::Specular;
+            texture.path = str;
+            specularMaps.push_back(texture);
+            textures_loaded.push_back(texture);
+        }
     }
     textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
     //// 3. normal maps

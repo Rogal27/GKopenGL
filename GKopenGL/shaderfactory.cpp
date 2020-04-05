@@ -1,5 +1,4 @@
 #include "shaderfactory.h"
-#include "shader.h"
 
 
 namespace shaderPath

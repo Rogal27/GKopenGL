@@ -31,5 +31,5 @@ private:
     Shader simpleModel;
 
 public:
-    Shader& getShader(ShaderType type);
+    Shader getShader(ShaderType type);
 };

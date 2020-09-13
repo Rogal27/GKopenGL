@@ -48,39 +48,54 @@ Model* LoadModel(string relativePath)
 
 Scene* SceneFactory::SimpleScene2()
 {
+	LightenScene* scene = new LightenScene();
+
+	//shaders
 	ShaderFactory& shaderFactory = ShaderFactory::getInstance();
-
-	Shader shader = shaderFactory.getShader(ShaderType::phong);
-
-	LightenScene* scene = new LightenScene(shader);
+	scene->AddShader(shaderFactory.getShader(ShaderType::phong));
+	scene->AddShader(shaderFactory.getShader(ShaderType::gouraud));
 
 	//cameras
 	Camera* camera1 = new Camera(glm::vec3(3.0f, 0.0f, 3.0f), glm::vec3(0, 0, 0), glm::vec3(0.0f, 1.0f, 0.0f));
-	Camera* camera2 = new MoveableCamera(glm::vec3(4.0f, 2.0f, 0.0f));
+	Camera* camera2 = new MoveableCamera(glm::vec3(0.0f, 0.0f, 0.0f));
 
 	scene->AddCamera(camera1);
 	scene->AddCamera(camera2);
 
 	//light
-	glm::vec3 lightPos1(1.2f, 1.0f, 2.0f);
-	glm::vec3 lightPos2(1.2f, -1.0f, 2.0f);
-	glm::vec3 lightPos3(0.2f, 1.0f, -2.0f);
+	glm::vec3 lightPos1(8.0f, 1.0f, 5.0f);
+	glm::vec3 lightPos2(8.0f, 1.0f, 10.0f);
+	glm::vec3 lightPos3(8.0f, 1.0f, 15.0f);
 	glm::vec3 lightPos4(-0.2f, -1.0f, -0.3f);
 
-	Light* light_point1 = new PointLight(lightPos1);
-	light_point1->setColor(glm::vec3(1.0f, 1.0f, 1.0f));
-	Light* light_point2 = new PointLight(lightPos2);
-	light_point2->setColor(glm::vec3(1.0f, 1.0f, 1.0f));
-	Light* light_point3 = new PointLight(lightPos3);
-	light_point3->setColor(glm::vec3(1.0f, 1.0f, 1.0f));
+	//Point Lights
+	Light* light_point1 = new PointLight(modelPath::cubeModelPath, lightPos1);
+	light_point1->setColor(glm::vec3(1.0f, 0.0f, 0.0f));
+	dynamic_cast<PointLight*>(light_point1)->MoveModelToLight();
+	//dynamic_cast<PointLight*>(light_point1)->model.Scale(glm::vec3(0.2f));
+
+	Light* light_point2 = new PointLight(modelPath::cubeModelPath, lightPos2);
+	light_point2->setColor(glm::vec3(0.0f, 1.0f, 0.0f));
+	dynamic_cast<PointLight*>(light_point2)->MoveModelToLight();
+	//dynamic_cast<PointLight*>(light_point2)->model.Scale(glm::vec3(0.2f));
+
+	Light* light_point3 = new PointLight(modelPath::cubeModelPath, lightPos3);
+	light_point3->setColor(glm::vec3(0.0f, 0.0f, 1.0f));
+	dynamic_cast<PointLight*>(light_point3)->MoveModelToLight();
+	//dynamic_cast<PointLight*>(light_point3)->model.Scale(glm::vec3(0.2f));
+
+	//Spot Lights
+
 	//SpotLight light_spot(camera2.GetPosition(), camera2.GetFront());
+
+	//Directional Lights
 	Light* light_dir = new DirectLight(lightPos4);
 	//light_dir->setColor(glm::vec3(0.0f, 1.0f, 1.0f));
 
 	scene->AddLight(light_point1, LightType::Point);
 	scene->AddLight(light_point2, LightType::Point);
 	scene->AddLight(light_point3, LightType::Point);
-	//scene->AddLight(light_spot, LightType::Point);
+	//scene->AddLight(light_spot, LightType::Spot);
 	scene->AddLight(light_dir, LightType::Directional);
 
 	//models
@@ -104,17 +119,17 @@ Scene* SceneFactory::SimpleScene2()
 
 	if (cube001)
 	{
-		cube001->Translate(glm::vec3(0.0f, 0.0f, 10.0f));
+		cube001->Translate(glm::vec3(10.0f, 0.0f, 5.0f));
 		scene->AddModel(cube001);
 	}
 	if (cube001)
 	{
-		cube010->Translate(glm::vec3(0.0f, 10.0f, 0.0f));
+		cube010->Translate(glm::vec3(10.0f, 0.0f, 10.0f));
 		scene->AddModel(cube010);
 	}
 	if (cube001)
 	{
-		cube100->Translate(glm::vec3(10.0f, 0.0f, 0.0f));
+		cube100->Translate(glm::vec3(10.0f, 0.0f, 15.0f));
 		scene->AddModel(cube100);
 	}
 

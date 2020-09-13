@@ -1,12 +1,12 @@
 #include "lightenscene.h"
 #include "scene.h"
-#include "shader.h"
 #include "light.h"
 #include "camera.h"
 #include "model.h"
+#include "shaderfactory.h"
 
 
-LightenScene::LightenScene(Shader shader) : Scene(shader)
+LightenScene::LightenScene() : Scene(), lightShader(ShaderFactory::getInstance().getShader(ShaderType::light))
 {
 	dirLightsCount = 0;
 	pointLightsCount = 0;
@@ -21,15 +21,34 @@ LightenScene::~LightenScene()
 	}
 }
 
-void LightenScene::SetUpLights()
+void LightenScene::Draw(const float& width, const float& height, const double& time)
 {
-	int dirLights = 0, pointLights = 0, spotLights = 0;
-	shader.setInt("dirLightsCount", dirLightsCount);
-	shader.setInt("pointLightsCount", pointLightsCount);
-	shader.setInt("spotLightsCount", spotLightsCount);
+	if (cameras.size() == 0)
+		return;
+
+	Camera* camera = GetActiveCamera();
+	if (camera == nullptr)
+		return;
+
+	Shader shader = GetActiveShader();
+	shader.use();
+
+	SetShaderCameraMatrices(camera, shader, width, height);
+
+	SetUpLights();
+
+	for (Model* model : models)
+	{
+		model->Draw(shader);
+	}
+
+	lightShader.use();
+
+	SetShaderCameraMatrices(camera, lightShader, width, height);
+
 	for (Light* l : lights)
 	{
-		l->setShaderUniforms(shader, dirLights, pointLights, spotLights);
+		l->Draw(lightShader);
 	}
 }
 
@@ -50,29 +69,15 @@ void LightenScene::AddLight(Light* light, LightType type)
 	}
 }
 
-void LightenScene::Draw(float width, float height, double time)
+void LightenScene::SetUpLights()
 {
-	if (cameras.size() == 0)
-		return;
-
-	Camera* camera = GetActiveCamera();
-	if (camera == nullptr)
-		return;
-	shader.use();
-
-	glm::mat4 modelMatrix = glm::mat4(1.0f);
-	glm::mat4 normalMatrix = glm::mat4(1.0f);
-	glm::mat4 projection = camera->GetProjectionMatrix(width, height);
-	glm::mat4 view = camera->GetViewMatrix();
-
-	shader.setMat4("projection", projection);
-	shader.setMat4("view", view);
-	shader.setVec3("viewPos", camera->GetPosition());
-
-	SetUpLights();
-
-	for (Model* model : models)
+	Shader shader = GetActiveShader();
+	int dirLights = 0, pointLights = 0, spotLights = 0;
+	shader.setInt("dirLightsCount", dirLightsCount);
+	shader.setInt("pointLightsCount", pointLightsCount);
+	shader.setInt("spotLightsCount", spotLightsCount);
+	for (Light* l : lights)
 	{
-		model->Draw(shader);
+		l->setShaderUniforms(shader, dirLights, pointLights, spotLights);
 	}
 }

@@ -26,4 +26,4 @@ void main()
     Normal = NormalMatrix * aNormal;
     
     TexCoords = aTexCoords;
-} 
+}

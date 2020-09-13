@@ -4,9 +4,9 @@
 #include "model.h"
 #include "light.h"
 
+using namespace std;
 
-
-Scene::Scene(Shader shader) : shader(shader), activeCameraIndex(-1)
+Scene::Scene() : activeShaderIndex(-1), activeCameraIndex(-1)
 {
 
 }
@@ -28,9 +28,11 @@ void Scene::AddModel(Model* model)
 	models.push_back(model);
 }
 
-void Scene::SetShader(Shader shader)
+void Scene::AddShader(Shader shader)
 {
-	this->shader = shader;
+	if (shaders.size() == 0)
+		activeShaderIndex = 0;
+	shaders.push_back(shader);
 }
 
 void Scene::AddCamera(Camera* camera)
@@ -38,6 +40,14 @@ void Scene::AddCamera(Camera* camera)
 	if (cameras.size() == 0)
 		activeCameraIndex = 0;
 	cameras.push_back(camera);
+}
+
+bool Scene::SetActiveShader(int index)
+{
+	if (index < 0 && index >= shaders.size())
+		return false;
+	activeShaderIndex = index;
+	return true;
 }
 
 bool Scene::SetActiveCamera(int index)
@@ -48,14 +58,22 @@ bool Scene::SetActiveCamera(int index)
 	return true;
 }
 
-Camera* Scene::GetActiveCamera()
+int Scene::GetShadersCount()
 {
-	return cameras[activeCameraIndex];
+	return shaders.size();
 }
 
 int Scene::GetCamerasCount()
 {
 	return cameras.size();
+}
+
+void Scene::SwitchShader()
+{
+	if (shaders.size() == 0)
+		return;
+	activeShaderIndex++;
+	activeShaderIndex %= shaders.size();
 }
 
 void Scene::SwitchCamera()
@@ -66,7 +84,17 @@ void Scene::SwitchCamera()
 	activeCameraIndex %= cameras.size();
 }
 
-void Scene::Draw(float width, float height, double time)
+Shader Scene::GetActiveShader()
+{
+	return shaders[activeShaderIndex];
+}
+
+Camera* Scene::GetActiveCamera()
+{
+	return cameras[activeCameraIndex];
+}
+
+void Scene::Draw(const float& width, const float& height, const double& time)
 {
 	if (cameras.size() == 0)
 		return;
@@ -75,8 +103,19 @@ void Scene::Draw(float width, float height, double time)
 	if (camera == nullptr)
 		return;
 
+	Shader shader = GetActiveShader();
 	shader.use();
 
+	SetShaderCameraMatrices(camera, shader, width, height);
+
+	for (Model* model : models)
+	{
+		model->Draw(shader);
+	}
+}
+
+void Scene::SetShaderCameraMatrices(Camera* camera, const Shader& shader, const float& width, const float& height)
+{
 	glm::mat4 modelMatrix = glm::mat4(1.0f);
 	glm::mat4 normalMatrix = glm::mat4(1.0f);
 	glm::mat4 projection = camera->GetProjectionMatrix(width, height);
@@ -85,9 +124,4 @@ void Scene::Draw(float width, float height, double time)
 	shader.setMat4("projection", projection);
 	shader.setMat4("view", view);
 	shader.setVec3("viewPos", camera->GetPosition());
-
-	for (Model* model : models)
-	{
-		model->Draw(shader);
-	}
 }

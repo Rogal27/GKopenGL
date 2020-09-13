@@ -29,7 +29,7 @@ ShaderFactory& ShaderFactory::getInstance()
     return instance;
 }
 
-Shader& ShaderFactory::getShader(ShaderType type)
+Shader ShaderFactory::getShader(ShaderType type)
 {
     switch (type)
     {

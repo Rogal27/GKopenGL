@@ -2,44 +2,37 @@
 
 #include <vector>
 
-#include "shader.h"
-
+class Shader;
 class Model;
 class Camera;
 class Light;
 enum class LightType;
 
-using namespace std;
-
 class Scene
 {
-protected:
-	Shader shader;
-	vector<Camera*> cameras;
-	int activeCameraIndex;
-
 public:
-	vector<Model*> models;
+	std::vector<Model*> models;
 
-	Scene(Shader shader);
+	Scene();
 	virtual ~Scene();
 	void AddModel(Model* model);
-	void SetShader(Shader shader);
+	void AddShader(Shader shader);
 	void AddCamera(Camera* camera);
+	bool SetActiveShader(int index);
 	bool SetActiveCamera(int index);
+	int GetShadersCount();
 	int GetCamerasCount();
+	void SwitchShader();
 	void SwitchCamera();
+	Shader GetActiveShader();
 	Camera* GetActiveCamera();
-	virtual void Draw(float width, float height, double time);
-};
+	virtual void Draw(const float& width, const float& height, const double& time);
 
-//class LightOnlyScene : public Scene
-//{
-//protected:
-//	vector<Light> lights;
-//public:
-//	LightOnlyScene(Shader shader);
-//	virtual ~LightOnlyScene() {}
-//	void AddLight(Light& light, LightType type);
-//	virtual void Draw(float width, float height, double time) override;
-//};
+protected:
+	void SetShaderCameraMatrices(Camera* camera, const Shader& shader, const float& width, const float& height);
+
+	std::vector<Shader> shaders;
+	std::vector<Camera*> cameras;
+	int activeShaderIndex;
+	int activeCameraIndex;
+};

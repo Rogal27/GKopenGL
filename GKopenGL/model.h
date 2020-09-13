@@ -36,6 +36,7 @@ public:
     //bool gammaCorrection;
 
     Model(string path);
+    Model(Model* model);
     ~Model();
     void Draw(Shader& shader);
     void SetModelMatrix(glm::mat4 model);

@@ -7,4 +7,5 @@ class SceneFactory
 	
 public:
 	Scene* SimpleScene();
+	Scene* SimpleScene2();
 };

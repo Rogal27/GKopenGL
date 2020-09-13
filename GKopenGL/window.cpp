@@ -210,7 +210,7 @@ int main()
     SceneFactory sf = SceneFactory();
 
     //scene
-    mainScene = sf.SimpleScene();
+    mainScene = sf.SimpleScene2();
     
     // render loop
     // -----------

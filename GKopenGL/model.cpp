@@ -21,6 +21,15 @@ Model::Model(string path)
     loadModel(path);
 }
 
+Model::Model(Model* model)
+{
+    this->modelMatrix = model->modelMatrix;
+    this->normalMatrix = model->normalMatrix;
+    this->meshes = model->meshes;
+    this->directory = model->directory;
+    this->textures_loaded = model->textures_loaded;
+}
+
 Model::~Model()
 {
     for (unsigned int i = 0; i < meshes.size(); i++)

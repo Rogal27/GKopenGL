@@ -32,6 +32,7 @@ public:
     vector<Mesh> meshes;
     string directory;
     vector<Texture> textures_loaded;
+    bool IsFloor;
 
     //bool gammaCorrection;
 

@@ -38,11 +38,18 @@ Model::~Model()
 
 void Model::Draw(Shader& shader)
 {
-    shader.setMat4("model", modelMatrix);
-    shader.setMat3("NormalMatrix", normalMatrix);
+    if (IsFloor)
+    {
 
-    for (unsigned int i = 0; i < meshes.size(); i++)
-        meshes[i].Draw(shader);
+    }
+    else
+    {
+        shader.setMat4("model", modelMatrix);
+        shader.setMat3("NormalMatrix", normalMatrix);
+
+        for (unsigned int i = 0; i < meshes.size(); i++)
+            meshes[i].Draw(shader);
+    }
 }
 
 void Model::loadModel(string path)

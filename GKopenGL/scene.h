@@ -43,12 +43,3 @@ public:
 //	void AddLight(Light& light, LightType type);
 //	virtual void Draw(float width, float height, double time) override;
 //};
-
-
-
-
-
-
-
-
-

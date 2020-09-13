@@ -157,6 +157,8 @@
     <ClCompile Include="glad.c" />
     <ClCompile Include="light.cpp" />
     <ClCompile Include="lightenscene.cpp" />
+    <ClCompile Include="lightmesh.cpp" />
+    <ClCompile Include="lightmodel.cpp" />
     <ClCompile Include="mesh.cpp" />
     <ClCompile Include="model.cpp" />
     <ClCompile Include="moveablecamera.cpp" />
@@ -174,6 +176,8 @@
     <ClInclude Include="directlight.h" />
     <ClInclude Include="light.h" />
     <ClInclude Include="lightenscene.h" />
+    <ClInclude Include="lightmesh.h" />
+    <ClInclude Include="lightmodel.h" />
     <ClInclude Include="mesh.h" />
     <ClInclude Include="model.h" />
     <ClInclude Include="moveablecamera.h" />

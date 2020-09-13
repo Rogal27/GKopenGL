@@ -50,7 +50,6 @@ void LightenScene::AddLight(Light* light, LightType type)
 	}
 }
 
-
 void LightenScene::Draw(float width, float height, double time)
 {
 	if (cameras.size() == 0)

@@ -18,11 +18,13 @@
 
 namespace modelPath
 {
+	//cube
+	const char* cubeModelPath = "models/objects/_working/cube/cube.obj";
 	//working
 	const char* floorModelPath = "models/objects/_working/floor/floor.obj";
 	const char* boeingKLMModelPath = "models/objects/_working/boeing-klm/source/boeing_klm_cycles/boeing_klm.obj";
-	const char* fireTruckModelPath = "models/objects/_working/fire_truck/scene.gltf";
 	const char* boeingFijiModelPath = "models/objects/_working/boeing-fiji/source/boeing_airpacific.obj";
+	const char* fireTruckModelPath = "models/objects/_working/fire_truck/scene.gltf";
 	const char* test11ModelPath = "models/objects/_working/embraer-erj-145/source/erj145.obj";
 	const char* test12ModelPath = "models/objects/_working/ilyushin-il-76/source/il76.obj";
 }
@@ -42,77 +44,6 @@ Model* LoadModel(string relativePath)
 		return nullptr;
 	}
 	return new Model(path.string());
-}
-
-Scene* SceneFactory::SimpleScene()
-{
-	//ShaderFactory& shaderFactory = ShaderFactory::getInstance();
-
-	//Shader shader = shaderFactory.getShader(ShaderType::phong);
-
-	//LightenScene* scene = new LightenScene(shader);
-
-	////cameras
-	//Camera* camera1 = new Camera(glm::vec3(3.0f, 0.0f, 3.0f), glm::vec3(0, 0, 0), glm::vec3(0.0f, 1.0f, 0.0f));
-	//Camera* camera2 = new MoveableCamera(glm::vec3(4.0f, 2.0f, 0.0f));
-
-	//scene->AddCamera(camera1);
-	//scene->AddCamera(camera2);
-
-	////light
-	//glm::vec3 lightPos1(1.2f, 1.0f, 2.0f);
-	//glm::vec3 lightPos2(1.2f, -1.0f, 2.0f);
-	//glm::vec3 lightPos3(0.2f, 1.0f, -2.0f);
-	//glm::vec3 lightPos4(-0.2f, -1.0f, -0.3f);
-
-	//Light* light_point1 = new PointLight(lightPos1);
-	//light_point1->setColor(glm::vec3(1.0f, 0.0f, 0.0f));
-	//Light* light_point2 = new PointLight(lightPos2);
-	//light_point2->setColor(glm::vec3(0.0f, 1.0f, 0.0f));
-	//Light* light_point3 = new PointLight(lightPos3);
-	//light_point3->setColor(glm::vec3(1.0f, 0.0f, 1.0f));
-	////SpotLight light_spot(camera2.GetPosition(), camera2.GetFront());
-	//Light* light_dir = new DirectLight(lightPos4);
-	////light_dir->setColor(glm::vec3(0.0f, 1.0f, 1.0f));
-
-	//scene->AddLight(light_point1, LightType::Point);
-	//scene->AddLight(light_point2, LightType::Point);
-	//scene->AddLight(light_point3, LightType::Point);
-	////scene->AddLight(light_spot, LightType::Point);
-	//scene->AddLight(light_dir, LightType::Directional);
-
-	////models
-	//fs::path path = fs::canonical(modelPath::nanosuitModelPath);
-	////Model* model1 = new Model(path.string());
-
-	//path = fs::canonical(modelPath::alpsModelPath);
-	//Model* model2 = new Model(path.string());
-
-	//path = fs::canonical(modelPath::liftModelPath);
-	//Model* chairLift = new Model(path.string());
-
-
-
-	//glm::mat4 modelMatrix = model2->GetModelMatrix();
-
-	//modelMatrix = glm::scale(modelMatrix, glm::vec3(0.01f, 0.01f, 0.01f));
-	//modelMatrix = glm::translate(modelMatrix, glm::vec3(-1085882.0, -3919.0f, 5951819.0f));
-
-	//model2->SetModelMatrix(modelMatrix);
-
-	//modelMatrix = chairLift->GetModelMatrix();
-
-	//modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 10.0f, 0.0f));
-	//modelMatrix = glm::scale(modelMatrix, glm::vec3(0.1f, 0.1f, 0.1f));
-
-	//chairLift->SetModelMatrix(modelMatrix);
-
-	////scene->AddModel(model1);
-	//scene->AddModel(model2);
-	//scene->AddModel(chairLift);
-
-	//return scene;
-	return nullptr;
 }
 
 Scene* SceneFactory::SimpleScene2()
@@ -161,52 +92,60 @@ Scene* SceneFactory::SimpleScene2()
 	//path = fs::canonical(modelPath::boeingKLMModelPath);
 	//Model* model3 = new Model(path.string());
 
-	Model* model1 = LoadModel(modelPath::test12ModelPath);
+	Model* cube001 = LoadModel(modelPath::cubeModelPath);
+	Model* cube010 = LoadModel(modelPath::cubeModelPath);
+	Model* cube100 = LoadModel(modelPath::cubeModelPath);
+	Model* boeingKLM = LoadModel(modelPath::boeingKLMModelPath);
+	Model* boeingFiji = LoadModel(modelPath::boeingFijiModelPath);
+	Model* fireTruck = LoadModel(modelPath::fireTruckModelPath);
 	Model* floor = LoadModel(modelPath::floorModelPath);
-	Model* model3 = nullptr;//LoadModel(modelPath::test17ModelPath);
 
-	if (model1)
+
+
+	if (cube001)
 	{
-		//glm::mat4 modelMatrix = model1->GetModelMatrix();
-		/*glm::vec3 point = model1->meshes[0].vertices[0].Position;
-		modelMatrix = glm::scale(modelMatrix, glm::vec3(0.1f, 0.1f, 0.1f));
-		modelMatrix = glm::translate(modelMatrix, glm::vec3(-point.x - 10.f, -point.y - 10.f, -point.z - 10.f));
-		model1->SetModelMatrix(modelMatrix);*/
-
-		scene->AddModel(model1);
+		cube001->Translate(glm::vec3(0.0f, 0.0f, 10.0f));
+		scene->AddModel(cube001);
+	}
+	if (cube001)
+	{
+		cube010->Translate(glm::vec3(0.0f, 10.0f, 0.0f));
+		scene->AddModel(cube010);
+	}
+	if (cube001)
+	{
+		cube100->Translate(glm::vec3(10.0f, 0.0f, 0.0f));
+		scene->AddModel(cube100);
 	}
 
-
-
-	if (model3)
+	if (boeingKLM)
 	{
-		glm::mat4 modelMatrix = model3->GetModelMatrix();
-		glm::vec3 point = model3->meshes[0].vertices[0].Position;
-		modelMatrix = glm::scale(modelMatrix, glm::vec3(0.1f, 0.1f, 0.1f));
-		modelMatrix = glm::translate(modelMatrix, glm::vec3(-point.x + 10.f, -point.y + 10.f, -point.z + 10.f));
-		model3->SetModelMatrix(modelMatrix);
+		boeingKLM->Scale(glm::vec3(0.1f, 0.1f, 0.1f));
+		boeingKLM->Translate(boeingKLM->GetFirstPoint() + glm::vec3(10.0f));
 
-		scene->AddModel(model3);
+		scene->AddModel(boeingKLM);
 	}
 
-	//Add floor
+	if (boeingFiji)
+	{
+		boeingFiji->Scale(glm::vec3(0.1f, 0.1f, 0.1f));
+		boeingFiji->Translate(boeingFiji->GetFirstPoint() + glm::vec3(-10.0f));
+
+		scene->AddModel(boeingFiji);
+	}
+
+	if (fireTruck)
+	{
+		fireTruck->Scale(glm::vec3(0.1f, 0.1f, 0.1f));
+		fireTruck->Translate(fireTruck->GetFirstPoint() + glm::vec3(-10.0f));
+
+		scene->AddModel(fireTruck);
+	}
+
 	if (floor)
 	{
-		for (int x = -10; x < 10; x++)
-		{
-			for (int y = -10; y < 10; y++)
-			{
-				int scale = 5;
-				float size = 2.0f;
-				Model* floorCopy = new Model(floor);
-				glm::mat4 modelMatrix = floorCopy->GetModelMatrix();
-				modelMatrix = glm::scale(modelMatrix, glm::vec3(scale, scale, scale));
-				modelMatrix = glm::translate(modelMatrix, glm::vec3(x * size, 0.0f, y * size));
-				floorCopy->SetModelMatrix(modelMatrix);
-
-				scene->AddModel(floorCopy);
-			}
-		}
+		floor->IsFloor = true;
+		scene->AddModel(floor);
 	}
 	
 	return scene;

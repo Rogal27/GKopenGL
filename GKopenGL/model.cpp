@@ -1,12 +1,15 @@
 #include <glad/glad.h>
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
+#include <glm/gtc/matrix_transform.hpp>
 
 #include "model.h"
 #include "mesh.h"
 #include "shader.h"
 
 #include "stb_image.h"
+
+using namespace std;
 
 namespace texturesPath
 {
@@ -18,6 +21,7 @@ Model::Model(string path)
 {
     modelMatrix = glm::mat4(1.0f);
     normalMatrix = glm::mat4(1.0f);
+    IsFloor = false;
     loadModel(path);
 }
 
@@ -28,6 +32,7 @@ Model::Model(Model* model)
     this->meshes = model->meshes;
     this->directory = model->directory;
     this->textures_loaded = model->textures_loaded;
+    this->IsFloor = model->IsFloor;
 }
 
 Model::~Model()
@@ -40,7 +45,25 @@ void Model::Draw(Shader& shader)
 {
     if (IsFloor)
     {
+        int scale = 5;
+        float size = 2.0f;
+        glm::mat4 modelMatrixClone = modelMatrix;
+        for (int x = -10; x < 10; x++)
+        {
+            for (int y = -10; y < 10; y++)
+            {
+                modelMatrixClone = modelMatrix;
+                
+                modelMatrixClone = glm::scale(modelMatrixClone, glm::vec3(scale, scale, scale));
+                modelMatrixClone = glm::translate(modelMatrixClone, glm::vec3(x * size, 0.0f, y * size));
 
+                shader.setMat4("model", modelMatrixClone);
+                shader.setMat3("NormalMatrix", glm::mat3(glm::transpose(glm::inverse(modelMatrixClone))));
+
+                for (unsigned int i = 0; i < meshes.size(); i++)
+                    meshes[i].Draw(shader);
+            }
+        }        
     }
     else
     {
@@ -81,6 +104,26 @@ glm::mat4 Model::GetModelMatrix()
 glm::mat3 Model::GetNormalMatrix()
 {
     return normalMatrix;
+}
+
+void Model::Translate(glm::vec3 vector)
+{
+    SetModelMatrix(glm::translate(modelMatrix, vector));
+}
+
+void Model::Scale(glm::vec3 scale)
+{
+    SetModelMatrix(glm::scale(modelMatrix, scale));
+}
+
+void Model::Rotate(float angle ,glm::vec3 axis)
+{
+    SetModelMatrix(glm::rotate(modelMatrix, angle, axis));
+}
+
+glm::vec3 Model::GetFirstPoint()
+{
+    return meshes[0].vertices[0].Position;
 }
 
 void Model::processNode(aiNode* node, const aiScene* scene)
@@ -225,13 +268,12 @@ vector<Texture> Model::loadMaterialTextures(aiMaterial* mat, aiTextureType type,
     return textures;
 }
 
-
 unsigned int Model::TextureFromFile(const char* path, const string& directory)
 {
     string filename = string(path);
     filename = directory + '/' + filename;
 
-    std::cout << "loading texture from file: " + filename << endl;
+    cout << "loading texture from file: " + filename << endl;
 
     unsigned int textureID;
     glGenTextures(1, &textureID);
@@ -261,7 +303,7 @@ unsigned int Model::TextureFromFile(const char* path, const string& directory)
     }
     else
     {
-        std::cout << "Texture failed to load at path: " << path << std::endl;
+        cout << "Texture failed to load at path: " << path << endl;
         stbi_image_free(data);
     }
 

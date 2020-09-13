@@ -102,6 +102,12 @@
     <ClCompile Include="shaderfactory.cpp">
       <Filter>Source Files\Shaders</Filter>
     </ClCompile>
+    <ClCompile Include="lightmesh.cpp">
+      <Filter>Source Files\Light</Filter>
+    </ClCompile>
+    <ClCompile Include="lightmodel.cpp">
+      <Filter>Source Files\Light</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="light.h">
@@ -145,6 +151,12 @@
     </ClInclude>
     <ClInclude Include="stb_image.h">
       <Filter>Header Files\Stb</Filter>
+    </ClInclude>
+    <ClInclude Include="lightmesh.h">
+      <Filter>Header Files\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="lightmodel.h">
+      <Filter>Header Files\Light</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

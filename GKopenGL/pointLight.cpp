@@ -5,8 +5,8 @@
 #include "light.h"
 #include "shader.h"
 
-PointLight::PointLight(vec3 _position, float _constant, float _linear, float _quadratic, vec3 _color, vec3 _ambient, vec3 _diffuse, vec3 _specular):
-	Light(_color, _ambient, _diffuse, _specular), position(_position), constant(_constant), linear(_linear), quadratic(_quadratic)
+PointLight::PointLight(std::string model_path, vec3 _position, float _constant, float _linear, float _quadratic, vec3 _color, vec3 _ambient, vec3 _diffuse, vec3 _specular):
+	Light(_color, _ambient, _diffuse, _specular), position(_position), constant(_constant), linear(_linear), quadratic(_quadratic), model(model_path)
 {
 
 }
@@ -66,4 +66,16 @@ void PointLight::setShaderUniforms(Shader& s, int& dirLights, int& pointLights, 
 	s.setFloat(name + "quadratic", quadratic);
 	s.setVec3(name + "color", color);
 	pointLights++;
+}
+
+void PointLight::Draw(Shader& shader)
+{
+	shader.setVec3("lightColor", color);
+	model.Draw(shader);
+}
+
+void PointLight::MoveModelToLight()
+{
+	auto vector = position - model.GetCenter();
+	model.Translate(vector);
 }

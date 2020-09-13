@@ -41,6 +41,7 @@ public:
 	vec3 getColor();
 
 	virtual void setShaderUniforms(Shader& s, int& dirLights, int& pointLights, int& spotLights) = 0;
+	virtual void Draw(Shader& shader);
 
 	virtual ~Light() {}
 };

@@ -66,3 +66,7 @@ vec3 Light::getColor()
 {
 	return color;
 }
+
+void Light::Draw(Shader& shader)
+{
+}

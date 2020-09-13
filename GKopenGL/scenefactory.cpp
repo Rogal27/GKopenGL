@@ -21,8 +21,8 @@ namespace modelPath
 	//working
 	const char* floorModelPath = "models/objects/_working/floor/floor.obj";
 	const char* boeingKLMModelPath = "models/objects/_working/boeing-klm/source/boeing_klm_cycles/boeing_klm.obj";
-	const char* boeingFijiodelPath = "models/objects/_working/fire_truck/scene.gltf";
-	const char* test5ModelPath = "models/objects/_working/boeing-fiji/source/boeing_airpacific.obj";
+	const char* fireTruckModelPath = "models/objects/_working/fire_truck/scene.gltf";
+	const char* boeingFijiModelPath = "models/objects/_working/boeing-fiji/source/boeing_airpacific.obj";
 	const char* test11ModelPath = "models/objects/_working/embraer-erj-145/source/erj145.obj";
 	const char* test12ModelPath = "models/objects/_working/ilyushin-il-76/source/il76.obj";
 }

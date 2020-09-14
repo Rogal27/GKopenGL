@@ -64,6 +64,7 @@ uniform sampler2D texture_specular1;
 uniform bool isFogActive;
 uniform vec3 backgroundColor;
 
+uniform bool isBlinnPhong;
 
 // function prototypes
 vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir);
@@ -117,10 +118,18 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir)
     // diffuse shading
     float diff = max(dot(normal, lightDir), 0.0);
     // specular shading
-    vec3 reflectDir = reflect(-lightDir, normal);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
+    float spec = 0.0;
+    if (isBlinnPhong)
+    {
+        vec3 halfwayDir = normalize(lightDir + viewDir);
+	    spec = pow(max(dot(normal, halfwayDir), 0.0), 32.0);
+    }
+    else
+    {
+        vec3 reflectDir = reflect(-lightDir, normal);
+        spec = pow(max(dot(viewDir, reflectDir), 0.0), 8.0);
+    }
     // combine results
-
     vec3 ambient = light.ambient * light.color * vec3(texture(texture_diffuse1, TexCoords));
     vec3 diffuse = light.diffuse * diff * light.color * vec3(texture(texture_diffuse1, TexCoords));
     vec3 specular = light.specular * spec * light.color * vec3(texture(texture_specular1, TexCoords));
@@ -134,8 +143,17 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 viewDir)
     // diffuse shading
     float diff = max(dot(normal, lightDir), 0.0);
     // specular shading
-    vec3 reflectDir = reflect(-lightDir, normal);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
+    float spec = 0.0;
+    if (isBlinnPhong)
+    {
+        vec3 halfwayDir = normalize(lightDir + viewDir);
+	    spec = pow(max(dot(normal, halfwayDir), 0.0), 32.0);
+    }
+    else
+    {
+        vec3 reflectDir = reflect(-lightDir, normal);
+        spec = pow(max(dot(viewDir, reflectDir), 0.0), 8.0);
+    }
     // attenuation
     float distance = length(light.position - FragPos);
     float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));    
@@ -157,8 +175,17 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 viewDir)
     // diffuse shading
     float diff = max(dot(normal, lightDir), 0.0);
     // specular shading
-    vec3 reflectDir = reflect(-lightDir, normal);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
+    float spec = 0.0;
+    if (isBlinnPhong)
+    {
+        vec3 halfwayDir = normalize(lightDir + viewDir);
+	    spec = pow(max(dot(normal, halfwayDir), 0.0), 32.0);
+    }
+    else
+    {
+        vec3 reflectDir = reflect(-lightDir, normal);
+        spec = pow(max(dot(viewDir, reflectDir), 0.0), 8.0);
+    }
     // attenuation
     float distance = length(light.position - FragPos);
     float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));    
@@ -167,7 +194,6 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 viewDir)
     float epsilon = light.cutOff - light.outerCutOff;
     float intensity = clamp((theta - light.outerCutOff) / epsilon, 0.0, 1.0);
     // combine results
-
     vec3 ambient = light.ambient * light.color * vec3(texture(texture_diffuse1, TexCoords));
     vec3 diffuse = light.diffuse * diff * light.color * vec3(texture(texture_diffuse1, TexCoords));
     vec3 specular = light.specular * spec * light.color * vec3(texture(texture_specular1, TexCoords));

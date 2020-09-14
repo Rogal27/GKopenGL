@@ -26,9 +26,11 @@ public:
 	int GetShadersCount();
 	int GetCamerasCount();
 	bool GetFogState();
+	bool GetBlinnPhongState();
 	void SwitchShader();
 	void SwitchCamera();
 	void SwitchFog();
+	void SwitchBlinnPhong();
 	Shader GetActiveShader();
 	Camera* GetActiveCamera();
 	virtual void Draw(const float& width, const float& height, const double& time);
@@ -41,4 +43,5 @@ protected:
 	int activeCameraIndex;
 	bool isFogActive;
 	glm::vec3 backgroundColor;
+	bool isBlinnPhong;
 };

@@ -187,8 +187,5 @@
     <None Include="modelFragmentShader.frag">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="blinnFragmentShader.frag">
-      <Filter>Shaders</Filter>
-    </None>
   </ItemGroup>
 </Project>

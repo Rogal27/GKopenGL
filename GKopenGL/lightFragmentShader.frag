@@ -14,6 +14,8 @@ uniform float quadratic;
 uniform bool isFogActive;
 uniform vec3 backgroundColor;
 
+uniform bool isBlinnPhong;
+
 void main()
 {
     float distance = length(viewPos - FragPos);

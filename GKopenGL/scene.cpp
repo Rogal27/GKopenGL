@@ -6,7 +6,7 @@
 
 using namespace std;
 
-Scene::Scene() : activeShaderIndex(-1), activeCameraIndex(-1), isFogActive(false), backgroundColor(0.5f, 0.8f, 0.95f)
+Scene::Scene() : activeShaderIndex(-1), activeCameraIndex(-1), isFogActive(false), backgroundColor(0.5f, 0.8f, 0.95f), isBlinnPhong(false)
 {
 
 }
@@ -78,6 +78,11 @@ bool Scene::GetFogState()
 	return isFogActive;
 }
 
+bool Scene::GetBlinnPhongState()
+{
+	return isBlinnPhong;
+}
+
 void Scene::SwitchShader()
 {
 	if (shaders.size() == 0)
@@ -97,6 +102,11 @@ void Scene::SwitchCamera()
 void Scene::SwitchFog()
 {
 	isFogActive = !isFogActive;
+}
+
+void Scene::SwitchBlinnPhong()
+{
+	isBlinnPhong != isBlinnPhong;
 }
 
 Shader Scene::GetActiveShader()
@@ -141,4 +151,5 @@ void Scene::SetShaderCameraMatrices(Camera* camera, const Shader& shader, const 
 	shader.setVec3("viewPos", camera->GetPosition());
 	shader.setBool("isFogActive", isFogActive);
 	shader.setVec3("backgroundColor", backgroundColor);
+	shader.setBool("isBlinnPhong", isBlinnPhong);
 }

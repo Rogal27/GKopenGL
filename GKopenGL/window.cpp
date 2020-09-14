@@ -42,7 +42,7 @@ double deltaTime = 0.0f;	// Time between current frame and last frame
 double lastFrame = 0.0f; // Time of last frame
 
 //shader type
-//0-phong, 1-blinn, 2-gouraud
+//0-phong, 2-gouraud
 int shader_type = 0;
 int camera_nr = 0;
 
@@ -233,14 +233,14 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		}
 		isPPressed = !isPPressed;
 	}
-	if (key == GLFW_KEY_O && action == GLFW_PRESS)
+	if (key == GLFW_KEY_M && action == GLFW_PRESS)
 	{
 		if (mainScene == nullptr)
 			return;
 		mainScene->SwitchShader();
 
 		shader_type++;
-		shader_type %= 3;
+		shader_type %= 2;
 
 		switch (shader_type)
 		{
@@ -248,9 +248,6 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 			cout << "Phong shading." << endl;
 			break;
 		case 1:
-			cout << "Blinn shading." << endl;
-			break;
-		case 2:
 			cout << "Gouraud shading." << endl;
 			break;
 		}
@@ -294,6 +291,20 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		else
 		{
 			cout << "Fog is off." << endl;
+		}
+	}
+	if (key == GLFW_KEY_B && action == GLFW_PRESS)
+	{
+		if (mainScene == nullptr)
+			return;
+		mainScene->SwitchBlinnPhong();
+		if (mainScene->GetBlinnPhongState())
+		{
+			cout << "Blinn-Phong reflection model is on." << endl;
+		}
+		else
+		{
+			cout << "Phong reflection model is on." << endl;
 		}
 	}
 }

@@ -56,7 +56,6 @@ LightenScene* SceneFactory::MainLightenScene()
 	//shaders
 	ShaderFactory& shaderFactory = ShaderFactory::getInstance();
 	scene->AddShader(shaderFactory.getShader(ShaderType::phong));
-	scene->AddShader(shaderFactory.getShader(ShaderType::blinn));
 	scene->AddShader(shaderFactory.getShader(ShaderType::gouraud));
 
 	//cameras

@@ -2,7 +2,6 @@
 
 namespace shaderPath
 {
-    const char* blinnFragmentShaderPath = "blinnFragmentShader.frag";
     const char* phongVertexShaderPath = "phongVertexShader.vert";
     const char* phongFragmentShaderPath = "phongFragmentShader.frag";
     const char* gouraudVertexShaderPath = "gouraudVertexShader.vert";
@@ -17,7 +16,6 @@ ShaderFactory::ShaderFactory() :
     phongShader(shaderPath::phongVertexShaderPath, shaderPath::phongFragmentShaderPath),
     gouraudShader(shaderPath::gouraudVertexShaderPath, shaderPath::gouraudFragmentShaderPath),
     lightShader(shaderPath::lightVertexShaderPath, shaderPath::lightFragmentShaderPath),
-    blinnShader(shaderPath::phongVertexShaderPath, shaderPath::blinnFragmentShaderPath),
     simpleModel(shaderPath::modelVertexShaderPath, shaderPath::modelFragmentShaderPath)
 {
     

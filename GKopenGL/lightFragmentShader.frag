@@ -25,7 +25,7 @@ void main()
     if (isFogActive)
 	{
 		float viewDistance = length(viewPos - FragPos);
-		float fogFactor = 1.0 / exp(viewDistance * 0.03);
+		float fogFactor = 1.0 / exp(viewDistance * 0.05);
 		fogFactor = clamp(fogFactor, 0.0, 1.0);
 		FragColor = vec4(mix(backgroundColor, FragColor.xyz, fogFactor), 1.0);
 	}

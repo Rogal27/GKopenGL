@@ -1,4 +1,4 @@
-#version 330 core
+#version 460 core
 layout (location = 0) in vec3 aPos;
 layout (location = 1) in vec3 aNormal;
 
@@ -10,7 +10,7 @@ uniform mat3 NormalMatrix;
 uniform vec3 lightPos;
 uniform vec3 lightColor;
 
-out vec3 LightingColor;
+out vec4 fragmentColor;
 
 void main()
 {
@@ -40,5 +40,5 @@ void main()
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), exponent);
     vec3 specular = specularStrength * spec * lightColor; 
             
-    LightingColor = ambient + diffuse + specular;
+    fragmentColor = vec4(ambient + diffuse + specular,1.0);
 }

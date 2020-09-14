@@ -1,4 +1,4 @@
-#version 330 core
+#version 460 core
 out vec4 FragColor;
 
 struct DirLight {
@@ -75,7 +75,7 @@ void main()
     vec3 norm = normalize(Normal);
     vec3 viewDir = normalize(viewPos - FragPos);
 
-    vec3 result = vec3(0.0f, 0.0f, 0.0f);
+    vec3 result = vec3(0.0, 0.0, 0.0);
 
     //Directional Lights
     for(int i = 0; i < NR_DIR_LIGHTS; i++)

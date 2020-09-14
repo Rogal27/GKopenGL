@@ -44,6 +44,7 @@ double lastFrame = 0.0f; // Time of last frame
 //shader type
 //0-phong, 1-blinn, 2-gouraud
 int shader_type = 0;
+int camera_nr = 0;
 
 //prototypes
 GLFWwindow* CreateMainWindow();
@@ -145,8 +146,8 @@ GLFWwindow* CreateMainWindow()
 	// glfw: initialize and configure
 	// ------------------------------
 	glfwInit();
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	// glfw window creation
@@ -223,10 +224,12 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		if (isPPressed == false)
 		{
 			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+			cout << "Polygon line mode." << endl;
 		}
 		else
 		{
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+			cout << "Polygon fill mode." << endl;
 		}
 		isPPressed = !isPPressed;
 	}
@@ -239,17 +242,17 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		shader_type++;
 		shader_type %= 3;
 
-		if (shader_type == 0)
+		switch (shader_type)
 		{
-			cout << "Phong shading" << endl;
-		}
-		else if (shader_type == 1)
-		{
-			cout << "Blinn shading" << endl;
-		}
-		else if (shader_type == 2)
-		{
-			cout << "Gouraud shading" << endl;
+		case 0:
+			cout << "Phong shading." << endl;
+			break;
+		case 1:
+			cout << "Blinn shading." << endl;
+			break;
+		case 2:
+			cout << "Gouraud shading." << endl;
+			break;
 		}
 	}
 	if (key == GLFW_KEY_C && action == GLFW_PRESS)
@@ -257,12 +260,41 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		if (mainScene == nullptr)
 			return;
 		mainScene->SwitchCamera();
+
+		camera_nr++;
+		camera_nr %= 3;
+		switch (camera_nr)
+		{
+		case 0:
+			cout << "Static camera." << endl;
+			break;
+		case 1:
+			cout << "Moveable camera." << endl;
+			break;
+		case 2:
+			cout << "Static follow object camera." << endl;
+			break;
+		case 3:
+			cout << "Follow object camera." << endl;
+			break;
+		case 4:
+			cout << "Moveable camera with spotlight." << endl;
+			break;
+		}
 	}
 	if (key == GLFW_KEY_F && action == GLFW_PRESS)
 	{
 		if (mainScene == nullptr)
 			return;
 		mainScene->SwitchFog();
+		if (mainScene->GetFogState())
+		{
+			cout << "Fog is on." << endl;
+		}
+		else
+		{
+			cout << "Fog is off." << endl;
+		}
 	}
 }
 
@@ -347,9 +379,6 @@ void AnimateFireTruckSelfDriving(LightenScene* scene, double currentTime)
 	for (int i = offset; i < offset + lights_count; i++)
 	{
 		SpotLight* light = dynamic_cast<SpotLight*>(scene->lights[i]);
-		//glm::vec3 pos = light->getPosition();
-		//glm::vec3 dir = light->getDirection();
-		//light->setPosition(glm::vec3(rotation * glm::vec4(pos, 0.0f)));
 		light->model.SetModelMatrix(rotation);		
 	}
 	FollowFireTruckSelfDrivingMovingCamera(mainScene);

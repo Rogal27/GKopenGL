@@ -127,7 +127,7 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir)
     else
     {
         vec3 reflectDir = reflect(-lightDir, normal);
-        spec = pow(max(dot(viewDir, reflectDir), 0.0), 8.0);
+        spec = pow(max(dot(viewDir, reflectDir), 0.0), 32.0);
     }
     // combine results
     vec3 ambient = light.ambient * light.color * vec3(texture(texture_diffuse1, TexCoords));
@@ -152,7 +152,7 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 viewDir)
     else
     {
         vec3 reflectDir = reflect(-lightDir, normal);
-        spec = pow(max(dot(viewDir, reflectDir), 0.0), 8.0);
+        spec = pow(max(dot(viewDir, reflectDir), 0.0), 32.0);
     }
     // attenuation
     float distance = length(light.position - FragPos);
@@ -184,7 +184,7 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 viewDir)
     else
     {
         vec3 reflectDir = reflect(-lightDir, normal);
-        spec = pow(max(dot(viewDir, reflectDir), 0.0), 8.0);
+        spec = pow(max(dot(viewDir, reflectDir), 0.0), 32.0);
     }
     // attenuation
     float distance = length(light.position - FragPos);

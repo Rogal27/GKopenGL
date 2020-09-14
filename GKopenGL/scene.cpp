@@ -106,7 +106,7 @@ void Scene::SwitchFog()
 
 void Scene::SwitchBlinnPhong()
 {
-	isBlinnPhong != isBlinnPhong;
+	isBlinnPhong = !isBlinnPhong;
 }
 
 Shader Scene::GetActiveShader()

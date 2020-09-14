@@ -16,7 +16,7 @@ protected:
 	float linear;
 	float quadratic;
 public:
-	PointLight(std::string model_path, vec3 _position, float _constant = 1.0f, float _linear = 0.09f, float _quadratic = 0.032f, vec3 _color = vec3(1.0f, 1.0f, 1.0f), vec3 _ambient = vec3(0.05f, 0.05f, 0.05f), vec3 _diffuse = vec3(0.8f, 0.8f, 0.8f), vec3 _specular = vec3(1.0f, 1.0f, 1.0f));
+	PointLight(std::string model_path, float _constant = 1.0f, float _linear = 0.04f, float _quadratic = 0.016f, vec3 _color = vec3(1.0f, 1.0f, 1.0f), vec3 _ambient = vec3(0.005f, 0.005f, 0.005f), vec3 _diffuse = vec3(0.8f, 0.8f, 0.8f), vec3 _specular = vec3(1.0f, 1.0f, 1.0f));
 
 	void setPosition(vec3 _position);
 	void setPosition(float x, float y, float z);
@@ -34,8 +34,6 @@ public:
 	virtual void Draw(Shader& shader) override;
 
 	virtual ~PointLight() {}
-
-	void MoveModelToLight();
 
 	LightModel model;
 };

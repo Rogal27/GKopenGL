@@ -18,6 +18,7 @@ class Model
 private:
     glm::mat4 modelMatrix;
     glm::mat3 normalMatrix;
+    glm::mat4 positionMatrix;
 
     void loadModel(std::string path);
     void processNode(aiNode* node, const aiScene* scene);
@@ -38,8 +39,10 @@ public:
     ~Model();
     void Draw(Shader& shader);
     void SetModelMatrix(glm::mat4 model);
+    void SetPositionMatrix(glm::mat4 position);
     glm::mat4 GetModelMatrix();
     glm::mat3 GetNormalMatrix();
+    glm::mat4 GetPositionMatrix();
     void Translate(glm::vec3 vector);
     void Scale(glm::vec3 scale);
     void Rotate(float angle, glm::vec3 axis);

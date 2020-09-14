@@ -1,25 +1,28 @@
 #include <iostream>
 #include <string>
+#include <glm/gtc/matrix_transform.hpp>
 
 #include "spotlight.h"
 #include "light.h"
 #include "shader.h"
 
-SpotLight::SpotLight(std::string model_path, vec3 _position, vec3 _direction, float _cutOff, float _outerCutOff, float _constant, float _linear, float _quadratic, vec3 _color, vec3 _ambient, vec3 _diffuse, vec3 _specular):
-	Light(_color, _ambient, _diffuse, _specular), position(_position), direction(_direction), constant(_constant), linear(_linear), quadratic(_quadratic), model(model_path)
+SpotLight::SpotLight(std::string model_path, vec3 _direction, float _cutOff, float _outerCutOff, float _constant, float _linear, float _quadratic, vec3 _color, vec3 _ambient, vec3 _diffuse, vec3 _specular):
+	Light(_color, _ambient, _diffuse, _specular), position(0.0f), direction(_direction), constant(_constant), linear(_linear), quadratic(_quadratic), model(model_path)
 {
 	setCutOff(_cutOff);
 	setOuterCutOff(_outerCutOff);
+	position = model.GetCenter();
 }
 
 void SpotLight::setPosition(vec3 _position)
 {
+	//model.Translate(_position - position);
 	position = _position;
 }
 
 void SpotLight::setPosition(float x, float y, float z)
 {
-	position = vec3(x, y, z);
+	setPosition(vec3(x, y, z));
 }
 
 void SpotLight::setDirection(vec3 _direction)
@@ -93,8 +96,8 @@ float SpotLight::getQuadratic()
 void SpotLight::setShaderUniforms(Shader& s, int& dirLights, int& pointLights, int& spotLights)
 {
 	std::string name = "spotLights[" + std::to_string(spotLights) + "].";
-	s.setVec3(name + "position", position);
-	s.setVec3(name + "direction", direction);
+	s.setVec3(name + "position", glm::vec3(model.GetModelMatrix() * model.GetPositionMatrix() * glm::vec4(position, 1.0f)));
+	s.setVec3(name + "direction", glm::normalize(glm::vec3(model.GetModelMatrix() * model.GetPositionMatrix() * glm::vec4(direction, 0.0f))));
 	s.setVec3(name + "ambient", ambient);
 	s.setVec3(name + "diffuse", diffuse);
 	s.setVec3(name + "specular", specular);
@@ -110,11 +113,8 @@ void SpotLight::setShaderUniforms(Shader& s, int& dirLights, int& pointLights, i
 void SpotLight::Draw(Shader& shader)
 {
 	shader.setVec3("lightColor", color);
+	shader.setFloat("constant", constant);
+	shader.setFloat("linear", linear);
+	shader.setFloat("quadratic", quadratic);
 	model.Draw(shader);
-}
-
-void SpotLight::MoveModelToLight()
-{
-	auto vector = position - model.GetCenter();
-	model.Translate(vector);
 }

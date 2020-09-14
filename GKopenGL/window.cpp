@@ -5,11 +5,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include <filesystem>
 #include <iostream>
-
-//#define STB_IMAGE_IMPLEMENTATION
-//#include "stb_image.h"
+#include <cmath>
 
 #include "shader.h"
 #include "shaderfactory.h"
@@ -20,38 +17,23 @@
 #include "pointLight.h"
 #include "spotLight.h"
 #include "model.h"
-#include "scene.h"
+#include "lightenscene.h"
 #include "scenefactory.h"
-
-namespace fs = std::filesystem;
 
 //window size
 int WIDTH = 1280;
 int HEIGHT = 720;
 
-constexpr double FPS = 1.0 / 60.0;
+glm::vec3 sky_color = glm::vec3(0.5f, 0.8f, 0.95f);
 
-//shaders Path
-
-//models path
-
-Scene* mainScene = nullptr;
+LightenScene* mainScene = nullptr;
 
 //is some key pressed
 bool isPPressed = false;
 
-//camera
-//Camera camera(glm::vec3(3.0f, 0.0f, 3.0f), glm::vec3(0, 0, 0), glm::vec3(0.0f, 1.0f, 0.0f));
-//MoveableCamera camera(glm::vec3(4.0f, 2.0f, 0.0f));
 float lastX = WIDTH / 2.0f;
 float lastY = HEIGHT / 2.0f;
 bool firstMouse = true;
-
-//light
-//glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
-//glm::vec3 lightPos2(1.2f, -1.0f, 2.0f);
-//glm::vec3 lightPos3(0.2f, 1.0f, -2.0f);
-//glm::vec3 lightColor(1.0f, 1.0f, 1.0f);
 
 //time
 double deltaTime = 0.0f;	// Time between current frame and last frame
@@ -68,6 +50,10 @@ void processInput(GLFWwindow* window);
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
+void AnimateRunwayLines(LightenScene* scene, double currentTime);
+void AnimateFireTruckSiren(LightenScene* scene, double currentTime);
+void AnimateFireTruckSelfDriving(LightenScene* scene, double currentTime);
+
 
 int main()
 {
@@ -79,7 +65,7 @@ int main()
 
 	//create scene
 	SceneFactory sf = SceneFactory();
-	mainScene = sf.SimpleScene2();
+	mainScene = sf.MainLightenScene();
 
 	// render loop
 	// -----------
@@ -92,7 +78,7 @@ int main()
 		frameCount++;
 		if (currentFrame - previousTime >= 1.0)
 		{
-			s.append("LearnOpenGL [FPS:");
+			s.append("GK OpenGL [FPS:");
 			s.append(std::to_string((int)frameCount));
 			s.append("]");
 			glfwSetWindowTitle(window, s.c_str());
@@ -105,10 +91,36 @@ int main()
 		// -----
 		processInput(window);
 
-		// render
-		// ------
-		glClearColor(0.5f, 0.8f, 0.95f, 1.0f);
+		//day and night
+		float sin_value = sin(glm::radians(8*currentFrame));
+		glm::vec3 current_sky_color = sky_color * (sin_value + 1.0f) / 2.0f;
+
+		glClearColor(current_sky_color.x, current_sky_color.y, current_sky_color.z, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		Light* dirLight = mainScene->lights[0];
+		DirectLight* directLight = dynamic_cast<DirectLight*>(dirLight);
+		if (sin_value > -0.5)
+		{	
+			glm::vec3 direction = glm::normalize(glm::vec3(-sin_value, -1.0f, -sin_value));
+			directLight->setDirection(direction);
+			directLight->TurnOn();
+		}
+		else
+		{
+			directLight->TurnOff();
+		}
+
+		//runwayLights
+		AnimateRunwayLines(mainScene, currentFrame);
+		//fire truck siren
+		AnimateFireTruckSiren(mainScene, currentFrame);
+		//Animate moving truck
+		AnimateFireTruckSelfDriving(mainScene, currentFrame);
+
+
+
+
 
 		//move light
 	   /* lightPos.x = 1.0f + sin(glfwGetTime()) * 2.0f;
@@ -287,7 +299,7 @@ GLFWwindow* CreateMainWindow()
 
 	// glfw window creation
 	// --------------------
-	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "LearnOpenGL", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "GK OpenGL", NULL, NULL);
 	if (window == NULL)
 	{
 		std::cout << "Failed to create GLFW window" << std::endl;
@@ -429,4 +441,57 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 		return;
 
 	camera->ProcessMouseScroll(yoffset);
+}
+
+void AnimateRunwayLines(LightenScene* scene, double currentTime)
+{
+	int offset = 1;
+	int lights_count = 16;
+	auto orange = glm::vec3(0.96f, 0.68f, 0.0f);
+	for (int i = offset; i < offset + lights_count; i+=2)
+	{
+		glm::vec3 color = orange * (sin(glm::radians(i * 10.0f + 150.0f * static_cast<float>(currentTime))) + 1.3f) / 2.0f;
+		scene->lights[i]->setColor(color);
+		scene->lights[i + 1]->setColor(color);
+	}
+}
+
+void AnimateFireTruckSiren(LightenScene* scene, double currentTime)
+{
+	int dir_lights = 1;
+	int runway_lights = 16;
+	int offset = dir_lights + runway_lights;
+	int sirens_count = 4;
+	auto red = glm::vec3(1.0f, 0.0f, 0.0f);
+	auto blue = glm::vec3(0.0f, 0.0f, 1.0f);
+	glm::vec3 white = glm::vec3(1.0f);
+	for (int i = offset; i < offset + sirens_count; i += 2)
+	{
+		float red_pow = pow(sin(glm::radians(i * 10.0f + 400.0f * static_cast<float>(currentTime))), 2);
+		float blue_pow = pow(cos(glm::radians(i * 10.0f + 400.0f * static_cast<float>(currentTime))), 2);
+		glm::vec3 red_siren = red * red_pow + white * blue_pow / 1.5f;
+		glm::vec3 blue_siren = blue * blue_pow + white * red_pow / 1.5f;
+		scene->lights[i]->setColor(red_siren);
+		scene->lights[i + 1]->setColor(blue_siren);
+	}
+}
+
+void AnimateFireTruckSelfDriving(LightenScene* scene, double currentTime)
+{
+	int offset = 23;
+	int lights_count = 2;
+	Model* truck = scene->models[1];
+	glm::mat4 rotation = glm::mat4(1.0f);
+	rotation = glm::translate(rotation, glm::vec3(-70.0f, 0.0f, 0.0f));
+	rotation = glm::rotate(rotation, glm::radians(static_cast<float>(10*currentTime)), glm::vec3(0.0f, 1.0f, 0.0f));
+	rotation = glm::translate(rotation, glm::vec3(70.0f, 0.0f, 0.0f));
+	truck->SetModelMatrix(rotation);
+	for (int i = offset; i < offset + lights_count; i++)
+	{
+		SpotLight* light = dynamic_cast<SpotLight*>(scene->lights[i]);
+		glm::vec3 pos = light->getPosition();
+		glm::vec3 dir = light->getDirection();
+		light->setPosition(glm::vec3(rotation * glm::vec4(pos, 0.0f)));
+		light->model.SetModelMatrix(rotation);		
+	}
 }

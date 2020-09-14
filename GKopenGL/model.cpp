@@ -21,6 +21,7 @@ Model::Model(string path)
 {
     modelMatrix = glm::mat4(1.0f);
     normalMatrix = glm::mat4(1.0f);
+    positionMatrix = glm::mat4(1.0f);
     IsFloor = false;
     loadModel(path);
 }
@@ -29,6 +30,7 @@ Model::Model(Model* model)
 {
     this->modelMatrix = model->modelMatrix;
     this->normalMatrix = model->normalMatrix;
+    this->positionMatrix = model->positionMatrix;
     this->meshes = model->meshes;
     this->directory = model->directory;
     this->textures_loaded = model->textures_loaded;
@@ -48,7 +50,7 @@ void Model::Draw(Shader& shader)
         int scale = 5;
         float size = 2.0f;
         glm::mat4 modelMatrixClone = modelMatrix;
-        for (int x = -10; x < 10; x++)
+        for (int x = -15; x < 10; x++)
         {
             for (int y = -10; y < 10; y++)
             {
@@ -57,8 +59,8 @@ void Model::Draw(Shader& shader)
                 modelMatrixClone = glm::scale(modelMatrixClone, glm::vec3(scale, scale, scale));
                 modelMatrixClone = glm::translate(modelMatrixClone, glm::vec3(x * size, 0.0f, y * size));
 
-                shader.setMat4("model", modelMatrixClone);
-                shader.setMat3("NormalMatrix", glm::mat3(glm::transpose(glm::inverse(modelMatrixClone))));
+                shader.setMat4("model", modelMatrixClone * positionMatrix);
+                shader.setMat3("NormalMatrix", glm::mat3(glm::transpose(glm::inverse(modelMatrixClone * positionMatrix))));
 
                 for (unsigned int i = 0; i < meshes.size(); i++)
                     meshes[i].Draw(shader);
@@ -67,7 +69,7 @@ void Model::Draw(Shader& shader)
     }
     else
     {
-        shader.setMat4("model", modelMatrix);
+        shader.setMat4("model", modelMatrix * positionMatrix);
         shader.setMat3("NormalMatrix", normalMatrix);
 
         for (unsigned int i = 0; i < meshes.size(); i++)
@@ -93,7 +95,13 @@ void Model::loadModel(string path)
 void Model::SetModelMatrix(glm::mat4 model)
 {
     modelMatrix = model;
-    normalMatrix = glm::mat3(glm::transpose(glm::inverse(model)));
+    normalMatrix = glm::mat3(glm::transpose(glm::inverse(modelMatrix * positionMatrix)));
+}
+
+void Model::SetPositionMatrix(glm::mat4 position)
+{
+    positionMatrix = position;
+    normalMatrix = glm::mat3(glm::transpose(glm::inverse(modelMatrix * positionMatrix)));
 }
 
 glm::mat4 Model::GetModelMatrix()
@@ -104,6 +112,11 @@ glm::mat4 Model::GetModelMatrix()
 glm::mat3 Model::GetNormalMatrix()
 {
     return normalMatrix;
+}
+
+glm::mat4 Model::GetPositionMatrix()
+{
+    return positionMatrix;
 }
 
 void Model::Translate(glm::vec3 vector)

@@ -1,24 +1,26 @@
 #include <iostream>
 #include <string>
+#include <glm/gtc/matrix_transform.hpp>
 
 #include "pointlight.h"
 #include "light.h"
 #include "shader.h"
 
-PointLight::PointLight(std::string model_path, vec3 _position, float _constant, float _linear, float _quadratic, vec3 _color, vec3 _ambient, vec3 _diffuse, vec3 _specular):
-	Light(_color, _ambient, _diffuse, _specular), position(_position), constant(_constant), linear(_linear), quadratic(_quadratic), model(model_path)
+PointLight::PointLight(std::string model_path, float _constant, float _linear, float _quadratic, vec3 _color, vec3 _ambient, vec3 _diffuse, vec3 _specular):
+	Light(_color, _ambient, _diffuse, _specular), position(0.0f), constant(_constant), linear(_linear), quadratic(_quadratic), model(model_path)
 {
-
+	position = model.GetCenter();
 }
 
 void PointLight::setPosition(vec3 _position)
 {
+	//model.Translate(_position - position);
 	position = _position;
 }
 
 void PointLight::setPosition(float x, float y, float z)
 {
-	position = vec3(x, y, z);
+	setPosition(vec3(x, y, z));
 }
 
 void PointLight::setConstant(float _constant)
@@ -57,7 +59,7 @@ float PointLight::getQuadratic()
 void PointLight::setShaderUniforms(Shader& s, int& dirLights, int& pointLights, int& spotLights)
 {	
 	std::string name = "pointLights[" + std::to_string(pointLights) + "].";
-	s.setVec3(name + "position", position);
+	s.setVec3(name + "position", glm::vec3(model.GetModelMatrix() * model.GetPositionMatrix() * glm::vec4(position, 1.0f)));
 	s.setVec3(name + "ambient", ambient);
 	s.setVec3(name + "diffuse", diffuse);
 	s.setVec3(name + "specular", specular);
@@ -71,11 +73,8 @@ void PointLight::setShaderUniforms(Shader& s, int& dirLights, int& pointLights, 
 void PointLight::Draw(Shader& shader)
 {
 	shader.setVec3("lightColor", color);
+	shader.setFloat("constant", constant);
+	shader.setFloat("linear", linear);
+	shader.setFloat("quadratic", quadratic);
 	model.Draw(shader);
-}
-
-void PointLight::MoveModelToLight()
-{
-	auto vector = position - model.GetCenter();
-	model.Translate(vector);
 }

@@ -1,11 +1,10 @@
 #pragma once
 
 class Scene;
+class LightenScene;
 
 class SceneFactory
-{
-	
+{	
 public:
-	Scene* SimpleScene();
-	Scene* SimpleScene2();
+	LightenScene* MainLightenScene();
 };

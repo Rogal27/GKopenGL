@@ -18,11 +18,11 @@ namespace CameraConsts
     // Default camera values
     const float YAW = 180.0f;
     const float PITCH = -10.0f;
-    const float SPEED = 2.5f;
+    const float SPEED = 10.f;
     const float SENSITIVITY = 0.1f;
     const float FOV = 45.0f;
     const float NEAR_PLANE = 0.1f;
-    const float FAR_PLANE = 100.0f;
+    const float FAR_PLANE = 200.0f;
 }
 
 

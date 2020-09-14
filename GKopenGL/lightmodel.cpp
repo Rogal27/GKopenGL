@@ -12,6 +12,7 @@ using namespace std;
 LightModel::LightModel(string path)
 {
 	modelMatrix = glm::mat4(1.0f);
+	positionMatrix = glm::mat4(1.0f);
 
 	loadModel(path);
 }
@@ -19,6 +20,7 @@ LightModel::LightModel(string path)
 LightModel::LightModel(LightModel* model)
 {
 	this->modelMatrix = model->modelMatrix;
+	this->positionMatrix = model->positionMatrix;
 	this->mesh = model->mesh;
 }
 
@@ -29,7 +31,7 @@ LightModel::~LightModel()
 
 void LightModel::Draw(Shader& shader)
 {
-	shader.setMat4("model", modelMatrix);
+	shader.setMat4("model", modelMatrix * positionMatrix);
 
 	mesh.Draw(shader);
 }
@@ -39,9 +41,19 @@ void LightModel::SetModelMatrix(glm::mat4 model)
 	modelMatrix = model;
 }
 
+void LightModel::SetPositionMatrix(glm::mat4 position)
+{
+	positionMatrix = position;
+}
+
 glm::mat4 LightModel::GetModelMatrix()
 {
 	return modelMatrix;
+}
+
+glm::mat4 LightModel::GetPositionMatrix()
+{
+	return positionMatrix;
 }
 
 void LightModel::Translate(glm::vec3 vector)
@@ -66,6 +78,12 @@ glm::vec3 LightModel::GetFirstPoint()
 
 glm::vec3 LightModel::GetCenter()
 {
+	const auto [min, max] = CalculateModelBoundaries();
+	return glm::vec3((max.x + min.x) / 2.0f, (max.y + min.y) / 2.0f, (max.z + min.z) / 2.0f);
+}
+
+std::pair<glm::vec3, glm::vec3> LightModel::CalculateModelBoundaries()
+{
 	const auto get_minmax = [&](auto selector) {
 		return std::minmax_element(mesh.vertices.rbegin(), mesh.vertices.rend(), [selector](const auto& p1, const auto& p2) { return selector(p1) < selector(p2); });
 	};
@@ -74,7 +92,9 @@ glm::vec3 LightModel::GetCenter()
 	const auto [yMin, yMax] = get_minmax([](auto p) { return p.y; });
 	const auto [zMin, zMax] = get_minmax([](auto p) { return p.z; });
 
-	return glm::vec3((xMax->x - xMin->x) / 2.0f, (yMax->y - yMin->y) / 2.0f, (zMax->z - zMin->z) / 2.0f);
+	glm::vec3 min(xMin->x, yMin->y, zMin->z);
+	glm::vec3 max(xMax->x, yMax->y, zMax->z);
+	return std::make_pair(min, max);
 }
 
 void LightModel::loadModel(string path)

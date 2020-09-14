@@ -8,7 +8,7 @@
 using namespace glm;
 
 DirectLight::DirectLight(vec3 _direction, vec3 _color, vec3 _ambient, vec3 _diffuse, vec3 _specular):
-	Light(_color, _ambient,_diffuse,_specular), direction(_direction)
+	Light(_color, _ambient,_diffuse,_specular), direction(_direction), isTurnedOn(true)
 {
 
 }
@@ -32,9 +32,18 @@ void DirectLight::setShaderUniforms(Shader& s, int& dirLights, int& pointLights,
 {	
 	std::string name = "dirLights[" + std::to_string(dirLights) + "].";
 	s.setVec3(name + "direction", direction);
-	s.setVec3(name + "ambient", ambient);
-	s.setVec3(name + "diffuse", diffuse);
-	s.setVec3(name + "specular", specular);
 	s.setVec3(name + "color", color);
+	if (isTurnedOn)
+	{
+		s.setVec3(name + "ambient", ambient);
+		s.setVec3(name + "diffuse", diffuse);
+		s.setVec3(name + "specular", specular);
+	}
+	else
+	{
+		s.setVec3(name + "ambient", ambient);
+		s.setVec3(name + "diffuse", glm::vec3(0.0f));
+		s.setVec3(name + "specular", glm::vec3(0.0f));
+	}
 	dirLights++;
 }

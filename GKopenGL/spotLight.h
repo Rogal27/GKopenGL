@@ -21,7 +21,7 @@ protected:
 	float quadratic;
 
 public:
-	SpotLight(std::string model_path, vec3 _position, vec3 _direction, float _cutOff = 12.5f, float _outerCutOff = 15.0f, float _constant = 1.0f, float _linear = 0.09f, float _quadratic = 0.032f, vec3 _color = vec3(1.0f, 1.0f, 1.0f), vec3 _ambient = vec3(0.05f, 0.05f, 0.05f), vec3 _diffuse = vec3(0.8f, 0.8f, 0.8f), vec3 _specular = vec3(1.0f, 1.0f, 1.0f));
+	SpotLight(std::string model_path, vec3 _direction, float _cutOff = 12.5f, float _outerCutOff = 15.0f, float _constant = 1.0f, float _linear = 0.04f, float _quadratic = 0.016f, vec3 _color = vec3(1.0f, 1.0f, 1.0f), vec3 _ambient = vec3(0.005f, 0.005f, 0.005f), vec3 _diffuse = vec3(0.8f, 0.8f, 0.8f), vec3 _specular = vec3(1.0f, 1.0f, 1.0f));
 
 	void setPosition(vec3 _position);
 	void setPosition(float x, float y, float z);
@@ -50,8 +50,6 @@ public:
 	virtual void Draw(Shader& shader) override;
 
 	virtual ~SpotLight() {}
-
-	void MoveModelToLight();
 
 	LightModel model;
 };

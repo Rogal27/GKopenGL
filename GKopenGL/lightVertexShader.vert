@@ -5,7 +5,13 @@ uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 
+out vec3 FragPos;
+
 void main()
 {
-    gl_Position = projection * view * model * vec4(aPos, 1.0);
+    vec4 fragPos = model * vec4(aPos, 1.0);
+
+    gl_Position = projection * view * fragPos;
+
+    FragPos = vec3(fragPos);
 }

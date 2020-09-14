@@ -15,12 +15,13 @@
 #include "model.h"
 #include "mesh.h"
 
-
 namespace modelPath
 {
 	//cube
 	const char* cubeModelPath = "models/objects/_working/cube/cube.obj";
-	const char* sphere1ModelPath = "models/objects/_working/sphere2/sphere.obj";
+	const char* sphere2ModelPath = "models/objects/_working/sphere2/sphere.obj";
+	const char* sphere3ModelPath = "models/objects/_working/sphere3/sphere.obj";
+	const char* sphere4ModelPath = "models/objects/_working/sphere3/sphere_detailed.obj";
 	const char* grayCubeModelPath = "models/objects/_working/wall/wall.obj";
 	//working
 	const char* floorModelPath = "models/objects/_working/floor/floor.obj";
@@ -62,7 +63,7 @@ LightenScene* SceneFactory::MainLightenScene()
 	Camera* camera2 = new MoveableCamera(glm::vec3(0.0f, 2.0f, 0.0f));
 	Camera* camera3 = new Camera(glm::vec3(10.0f, 20.0f, 50.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	Camera* camera4 = new Camera(glm::vec3(10.0f, 20.0f, 50.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-	Camera* camera5 = new MoveableCamera(glm::vec3(10.0f, 2.0f, -30.0f));
+	Camera* camera5 = new MoveableCamera(glm::vec3(15.0f, 2.0f, -17.0f));
 
 	scene->AddCamera(camera1);
 	scene->AddCamera(camera2);
@@ -224,8 +225,11 @@ LightenScene* SceneFactory::MainLightenScene()
 	
 
 	//models
-	Model* sphere1 = LoadModel(modelPath::sphere1ModelPath);
-	Model* sphere2 = LoadModel(modelPath::sphere1ModelPath);
+	Model* sphere1 = LoadModel(modelPath::sphere2ModelPath);
+	Model* sphere2 = LoadModel(modelPath::sphere2ModelPath);
+	Model* sphere3 = LoadModel(modelPath::sphere4ModelPath);
+	Model* sphere4 = LoadModel(modelPath::sphere4ModelPath);
+	Model* sphere5 = LoadModel(modelPath::sphere4ModelPath);
 	Model* wall = LoadModel(modelPath::grayCubeModelPath);
 	Model* boeingKLM = LoadModel(modelPath::boeingKLMModelPath);
 	Model* boeingFiji = LoadModel(modelPath::boeingFijiModelPath);
@@ -269,14 +273,35 @@ LightenScene* SceneFactory::MainLightenScene()
 
 	if (sphere1)
 	{
-		sphere1->Translate(glm::vec3(6.0f, 2.0f, -10.0f));
+		sphere1->Translate(glm::vec3(8.0f, 2.0f, -10.0f));
 		scene->AddModel(sphere1);
 	}
 
 	if (sphere2)
 	{
-		sphere2->Translate(glm::vec3(3.0f, 2.0f, -50.0f));
+		sphere2->Translate(glm::vec3(4.5f, 2.0f, -24.0f));
 		scene->AddModel(sphere2);
+	}
+
+	if (sphere3)
+	{
+		sphere3->Translate(glm::vec3(6.5f, 2.0f, -17.0f));
+		sphere3->Scale(glm::vec3(1.0f));
+		scene->AddModel(sphere3);
+	}
+
+	if (sphere4) // by plane
+	{
+		sphere4->Translate(glm::vec3(9.5f, 2.0f, 21.5f));
+		sphere4->Scale(glm::vec3(1.0f));
+		scene->AddModel(sphere4);
+	}
+
+	if (sphere5) //by truck 3
+	{
+		sphere5->Translate(glm::vec3(-10.0f, 1.5f, 5.0f));
+		sphere5->Scale(glm::vec3(0.8f));
+		scene->AddModel(sphere5);
 	}
 
 	if (wall)

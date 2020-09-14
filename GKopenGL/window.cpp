@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <cmath>
+#include <algorithm>
 
 #include "shader.h"
 #include "shaderfactory.h"
@@ -25,6 +26,7 @@ int WIDTH = 1280;
 int HEIGHT = 720;
 
 glm::vec3 sky_color = glm::vec3(0.5f, 0.8f, 0.95f);
+glm::vec3 fog_color = glm::vec3(0.65f, 0.65f, 0.65f);
 
 LightenScene* mainScene = nullptr;
 
@@ -95,9 +97,13 @@ int main()
 		processInput(window);
 
 		//day and night
-		float sin_value = sin(glm::radians(4 * currentFrame));
+		float sin_value = sin(glm::radians(3 * currentFrame));
 		float multiplier = (sin_value + 1.0f) / 2.0f;
-		glm::vec3 current_sky_color = sky_color * multiplier;
+		glm::vec3 current_sky_color = glm::vec3(1.0f);
+		if (mainScene->GetFogState())
+			current_sky_color = fog_color * std::clamp(multiplier, 0.0f, 1.0f);
+		else
+			current_sky_color = sky_color * multiplier;
 
 		glClearColor(current_sky_color.x, current_sky_color.y, current_sky_color.z, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -105,17 +111,7 @@ int main()
 		Light* dirLight = mainScene->lights[0];
 		dirLight->setDiffuse(glm::vec3(0.8f) * multiplier);
 		dirLight->setSpecular(glm::vec3(1.0f) * multiplier);
-		//DirectLight* directLight = dynamic_cast<DirectLight*>(dirLight);
-		//if (sin_value > -0.5)
-		//{	
-		//	glm::vec3 direction = glm::normalize(glm::vec3(-sin_value, -1.0f, -sin_value));
-		//	directLight->setDirection(direction);
-		//	directLight->TurnOn();
-		//}
-		//else
-		//{
-		//	directLight->TurnOff();
-		//}
+		mainScene->SetBackgroundColor(current_sky_color);
 
 		//runwayLights
 		AnimateRunwayLines(mainScene, currentFrame);
@@ -128,164 +124,14 @@ int main()
 		//move light spot with camera5
 		MoveLightSpotWithCamera5(mainScene);
 
-		//move light
-	   /* lightPos.x = 1.0f + sin(glfwGetTime()) * 2.0f;
-		lightPos.y = sin(glfwGetTime() / 2.0f) * 1.0f;
-		light_point.setPosition(lightPos);
-
-		float r = sin(glfwGetTime());
-		float g = cos(glfwGetTime());
-
-		light_point2.setColor(r * r, g * g, r * g + 0.5f);
-		light_point3.setColor(r * r, r * g + 0.5f, g*g);
-
-		light_spot.setPosition(camera.GetPosition());
-		light_spot.setDirection(camera.GetFront());*/
-
-		// be sure to activate shader when setting uniforms/drawing objects
-		//shaders[shader_type].use();
-
-		// view/projection transformations
-		/*glm::mat4 model = glm::mat4(1.0f);
-		glm::mat4 projection = camera.GetProjectionMatrix((float)WIDTH, (float)HEIGHT);
-		glm::mat4 view = camera.GetViewMatrix();*/
-
-		// world transformations
-
-		//glm::mat3 NormalMatrix = glm::mat3(glm::transpose(glm::inverse(model)));
-
-		//vertex shader uniforms
-		//shaders[shader_type].setMat4("model", model);
-		//shaders[shader_type].setMat4("view", view);
-		//shaders[shader_type].setMat4("projection", projection);
-		//shaders[shader_type].setMat3("NormalMatrix", NormalMatrix);
-
-		//shaders[shader_type].setVec3("objectColor", 1.0f, 0.5f, 0.31f);
-		//shaders[shader_type].setVec3("viewPos", camera.GetPosition());
-
-		//lights
-		//int dirLights = 0, pointLights = 0, spotLights = 0;
-		//shaders[shader_type].setInt("dirLightsCount", 1);
-		//shaders[shader_type].setInt("pointLightsCount", 3);
-		//shaders[shader_type].setInt("spotLightsCount", 1);
-
-		//light_point.setShaderUniforms(shaders[shader_type], dirLights, pointLights, spotLights);
-		//light_point2.setShaderUniforms(shaders[shader_type], dirLights, pointLights, spotLights);
-		//light_point3.setShaderUniforms(shaders[shader_type], dirLights, pointLights, spotLights);
-		//light_spot.setShaderUniforms(shaders[shader_type], dirLights, pointLights, spotLights);
-		//light_dir.setShaderUniforms(shaders[shader_type], dirLights, pointLights, spotLights);
-
-		// render the cube
-
-		//model = glm::mat4(1.0f);
-		//model = glm::translate(model, glm::vec3(1.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
-		//model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));	// it's a bit too big for our scene, so scale it down
-
-		//shaders[shader_type].setMat4("model", model);
-
-		//glBindVertexArray(cubeVAO);
-		//glDrawArrays(GL_TRIANGLES, 0, 36);
-
-		//model = glm::mat4(1.0f);
-		////model = glm::translate(model, glm::vec3(1.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
-		//model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));	// it's a bit too big for our scene, so scale it down
-
-		//shaders[shader_type].setMat4("model", model);
-
-		//glBindVertexArray(cubeVAO);
-		//glDrawArrays(GL_TRIANGLES, 0, 36);
-
-		// render the loaded model
-
-		//shaders[shader_type].setMat4("view", view);
-		//shaders[shader_type].setMat4("projection", projection);
-
-		//for (size_t i = 0; i < 10; i++)
-		//{
-		//    for (size_t j = 0; j < 10; j++)
-		//    {
-		//        model = glm::mat4(1.0f);
-		//        model = glm::translate(model, glm::vec3(i, -1.75f, j)); // translate it down so it's at the center of the scene
-		//        model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));	// it's a bit too big for our scene, so scale it down
-		//        float angle = glfwGetTime() * 25.0f * i + j;
-		//        model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-		//        NormalMatrix = glm::mat3(glm::transpose(glm::inverse(model)));
-
-		//        shaders[shader_type].setMat4("model", model);
-
-		//        shaders[shader_type].setMat3("NormalMatrix", NormalMatrix);
-		//        ourModel.Draw(shaders[shader_type]);
-		//    }
-		//
-		//}
-
-		//model
-		//glm::mat4 model = glm::mat4(1.0f);
-
 		mainScene->Draw(WIDTH, HEIGHT, 0.0);
-
-		//Camera* camera = mainScene->GetActiveCamera();
-		//if (camera == nullptr)
-		//	continue;
-
-		//glm::mat4 projection = camera->GetProjectionMatrix(WIDTH, HEIGHT);
-		//glm::mat4 view = camera->GetViewMatrix();
-
-		//// also draw the lamp object
-		//lampShader.use();
-		//lampShader.setVec3("lightColor", light_point.getColor());
-		//lampShader.setMat4("projection", projection);
-		//lampShader.setMat4("view", view);
-		//model = glm::mat4(1.0f);
-		//model = glm::translate(model, light_point.getPosition());
-		//model = glm::scale(model, glm::vec3(0.2f)); // a smaller cube
-		//lampShader.setMat4("model", model);
-
-		//glBindVertexArray(lightVAO);
-		//glDrawArrays(GL_TRIANGLES, 0, 36);
-
-		//lampShader.use();
-		//lampShader.setVec3("lightColor", light_point2.getColor());
-		//lampShader.setMat4("projection", projection);
-		//lampShader.setMat4("view", view);
-		//model = glm::mat4(1.0f);
-		//model = glm::translate(model, light_point2.getPosition());
-		//model = glm::scale(model, glm::vec3(0.2f)); // a smaller cube
-		//lampShader.setMat4("model", model);
-
-		//glBindVertexArray(lightVAO);
-		//glDrawArrays(GL_TRIANGLES, 0, 36);
-
-		//lampShader.use();
-		//lampShader.setVec3("lightColor", light_point3.getColor());
-		//lampShader.setMat4("projection", projection);
-		//lampShader.setMat4("view", view);
-		//model = glm::mat4(1.0f);
-		//model = glm::translate(model, light_point3.getPosition());
-		//model = glm::scale(model, glm::vec3(0.2f)); // a smaller cube
-		//lampShader.setMat4("model", model);
-
-		//glBindVertexArray(lightVAO);
-		//glDrawArrays(GL_TRIANGLES, 0, 36);
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
 		glfwSwapBuffers(window);
 		glfwPollEvents();
-
-		/*double endFrame = glfwGetTime();
-		while (endFrame - currentFrame < FPS)
-		{
-			endFrame = glfwGetTime();
-		}*/
 	}
 	delete mainScene;
-
-	// optional: de-allocate all resources once they've outlived their purpose:
-	// ------------------------------------------------------------------------
-	//glDeleteVertexArrays(1, &cubeVAO);
-	//glDeleteVertexArrays(1, &lightVAO);
-	//glDeleteBuffers(1, &VBO);
 
 	// glfw: terminate, clearing all previously allocated GLFW resources.
 	// ------------------------------------------------------------------
@@ -407,6 +253,12 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		if (mainScene == nullptr)
 			return;
 		mainScene->SwitchCamera();
+	}
+	if (key == GLFW_KEY_F && action == GLFW_PRESS)
+	{
+		if (mainScene == nullptr)
+			return;
+		mainScene->SwitchFog();
 	}
 	if (key == GLFW_KEY_B && action == GLFW_PRESS)
 	{

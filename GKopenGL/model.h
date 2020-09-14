@@ -7,7 +7,6 @@
 
 #include <glm/glm.hpp>
 
-
 class Mesh;
 struct Texture;
 class Shader;

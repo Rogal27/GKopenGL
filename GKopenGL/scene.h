@@ -1,5 +1,6 @@
 #pragma once
 
+#include <glm/glm.hpp>
 #include <vector>
 
 class Shader;
@@ -21,10 +22,13 @@ public:
 	void AddCamera(Camera* camera);
 	bool SetActiveShader(int index);
 	bool SetActiveCamera(int index);
+	void SetBackgroundColor(glm::vec3 color);
 	int GetShadersCount();
 	int GetCamerasCount();
+	bool GetFogState();
 	void SwitchShader();
 	void SwitchCamera();
+	void SwitchFog();
 	Shader GetActiveShader();
 	Camera* GetActiveCamera();
 	virtual void Draw(const float& width, const float& height, const double& time);
@@ -35,4 +39,6 @@ protected:
 	std::vector<Shader> shaders;
 	int activeShaderIndex;
 	int activeCameraIndex;
+	bool isFogActive;
+	glm::vec3 backgroundColor;
 };

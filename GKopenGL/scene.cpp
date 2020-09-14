@@ -6,7 +6,7 @@
 
 using namespace std;
 
-Scene::Scene() : activeShaderIndex(-1), activeCameraIndex(-1)
+Scene::Scene() : activeShaderIndex(-1), activeCameraIndex(-1), isFogActive(false), backgroundColor(0.5f, 0.8f, 0.95f)
 {
 
 }
@@ -58,6 +58,11 @@ bool Scene::SetActiveCamera(int index)
 	return true;
 }
 
+void Scene::SetBackgroundColor(glm::vec3 color)
+{
+	backgroundColor = color;
+}
+
 int Scene::GetShadersCount()
 {
 	return shaders.size();
@@ -66,6 +71,11 @@ int Scene::GetShadersCount()
 int Scene::GetCamerasCount()
 {
 	return cameras.size();
+}
+
+bool Scene::GetFogState()
+{
+	return isFogActive;
 }
 
 void Scene::SwitchShader()
@@ -82,6 +92,11 @@ void Scene::SwitchCamera()
 		return;
 	activeCameraIndex++;
 	activeCameraIndex %= cameras.size();
+}
+
+void Scene::SwitchFog()
+{
+	isFogActive = !isFogActive;
 }
 
 Shader Scene::GetActiveShader()
@@ -124,4 +139,6 @@ void Scene::SetShaderCameraMatrices(Camera* camera, const Shader& shader, const 
 	shader.setMat4("projection", projection);
 	shader.setMat4("view", view);
 	shader.setVec3("viewPos", camera->GetPosition());
+	shader.setBool("isFogActive", isFogActive);
+	shader.setVec3("backgroundColor", backgroundColor);
 }

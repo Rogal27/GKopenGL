@@ -61,6 +61,9 @@ in vec2 TexCoords;
 uniform sampler2D texture_diffuse1;
 uniform sampler2D texture_specular1;
 
+uniform bool isFogActive;
+uniform vec3 backgroundColor;
+
 
 // function prototypes
 vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir);
@@ -95,8 +98,16 @@ void main()
             break;
         result += CalcSpotLight(spotLights[i], norm, viewDir);
     }
-    
+
     FragColor = vec4(result, 1.0);
+
+    if (isFogActive)
+	{
+		float viewDistance = length(viewPos - FragPos);
+		float fogFactor = 1.0 / exp(viewDistance * 0.08);
+		fogFactor = clamp(fogFactor, 0.0, 1.0);
+		FragColor = vec4(mix(backgroundColor, FragColor.xyz, fogFactor), 1.0);
+	}
 }  
 
 // calculates the color when using a directional light.

@@ -60,9 +60,11 @@ LightenScene* SceneFactory::MainLightenScene()
 	//cameras
 	Camera* camera1 = new Camera(glm::vec3(80.0f, 20.0f, 10.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	Camera* camera2 = new MoveableCamera(glm::vec3(0.0f, 2.0f, 0.0f));
+	Camera* camera3 = new Camera(glm::vec3(10.0f, 20.0f, 50.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 
 	scene->AddCamera(camera1);
 	scene->AddCamera(camera2);
+	scene->AddCamera(camera3);
 
 	//light
 	glm::vec3 lightPos1(8.0f, 1.0f, 5.0f);

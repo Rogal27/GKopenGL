@@ -53,6 +53,7 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void AnimateRunwayLines(LightenScene* scene, double currentTime);
 void AnimateFireTruckSiren(LightenScene* scene, double currentTime);
 void AnimateFireTruckSelfDriving(LightenScene* scene, double currentTime);
+void FollowFireTruckSelfDrivingStaticCamera(LightenScene* scene);
 
 
 int main()
@@ -92,24 +93,27 @@ int main()
 		processInput(window);
 
 		//day and night
-		float sin_value = sin(glm::radians(8*currentFrame));
-		glm::vec3 current_sky_color = sky_color * (sin_value + 1.0f) / 2.0f;
+		float sin_value = sin(glm::radians(4 * currentFrame));
+		float multiplier = (sin_value + 1.0f) / 2.0f;
+		glm::vec3 current_sky_color = sky_color * multiplier;
 
 		glClearColor(current_sky_color.x, current_sky_color.y, current_sky_color.z, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		Light* dirLight = mainScene->lights[0];
-		DirectLight* directLight = dynamic_cast<DirectLight*>(dirLight);
-		if (sin_value > -0.5)
-		{	
-			glm::vec3 direction = glm::normalize(glm::vec3(-sin_value, -1.0f, -sin_value));
-			directLight->setDirection(direction);
-			directLight->TurnOn();
-		}
-		else
-		{
-			directLight->TurnOff();
-		}
+		dirLight->setDiffuse(glm::vec3(0.8f) * multiplier);
+		dirLight->setSpecular(glm::vec3(1.0f) * multiplier);
+		//DirectLight* directLight = dynamic_cast<DirectLight*>(dirLight);
+		//if (sin_value > -0.5)
+		//{	
+		//	glm::vec3 direction = glm::normalize(glm::vec3(-sin_value, -1.0f, -sin_value));
+		//	directLight->setDirection(direction);
+		//	directLight->TurnOn();
+		//}
+		//else
+		//{
+		//	directLight->TurnOff();
+		//}
 
 		//runwayLights
 		AnimateRunwayLines(mainScene, currentFrame);
@@ -117,7 +121,8 @@ int main()
 		AnimateFireTruckSiren(mainScene, currentFrame);
 		//Animate moving truck
 		AnimateFireTruckSelfDriving(mainScene, currentFrame);
-
+		//follow truck with static camera
+		FollowFireTruckSelfDrivingStaticCamera(mainScene);
 
 
 
@@ -494,4 +499,14 @@ void AnimateFireTruckSelfDriving(LightenScene* scene, double currentTime)
 		light->setPosition(glm::vec3(rotation * glm::vec4(pos, 0.0f)));
 		light->model.SetModelMatrix(rotation);		
 	}
+}
+
+void FollowFireTruckSelfDrivingStaticCamera(LightenScene* scene)
+{
+	Model* truck = scene->models[1];
+	Camera* follow = scene->cameras[2];
+
+	glm::vec3 target_pos = glm::vec3(truck->GetModelMatrix() * truck->GetPositionMatrix() * glm::vec4(truck->GetFirstPoint(), 1.0f));
+
+	follow->ChangeTarget(target_pos);
 }

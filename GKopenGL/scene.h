@@ -12,6 +12,7 @@ class Scene
 {
 public:
 	std::vector<Model*> models;
+	std::vector<Camera*> cameras;
 
 	Scene();
 	virtual ~Scene();
@@ -32,7 +33,6 @@ protected:
 	void SetShaderCameraMatrices(Camera* camera, const Shader& shader, const float& width, const float& height);
 
 	std::vector<Shader> shaders;
-	std::vector<Camera*> cameras;
 	int activeShaderIndex;
 	int activeCameraIndex;
 };

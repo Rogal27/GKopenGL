@@ -67,12 +67,14 @@ uniform vec3 backgroundColor;
 uniform bool isBlinnPhong;
 
 // function prototypes
-vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir);
-vec3 CalcPointLight(PointLight light, vec3 normal, vec3 viewDir);
-vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 viewDir);
+vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir, float specular1, float specular2);
+vec3 CalcPointLight(PointLight light, vec3 normal, vec3 viewDir, float specular1, float specular2);
+vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 viewDir, float specular1, float specular2);
 
 void main()
 {
+    float specular1 = 32.0;
+    float specular2 = 16.0;
     vec3 norm = normalize(Normal);
     vec3 viewDir = normalize(viewPos - FragPos);
 
@@ -83,21 +85,21 @@ void main()
     {
         if(i >= dirLightsCount)
             break;
-        result += CalcDirLight(dirLights[i], norm, viewDir);
+        result += CalcDirLight(dirLights[i], norm, viewDir, specular1, specular2);
     }
     //Point Lights
     for(int i = 0; i < NR_POINT_LIGHTS; i++)
     {
         if(i >= pointLightsCount)
             break;
-        result += CalcPointLight(pointLights[i], norm, viewDir);
+        result += CalcPointLight(pointLights[i], norm, viewDir, specular1, specular2);
     }
     //Spot Lights
     for(int i = 0; i < NR_SPOT_LIGHTS; i++)
     {
         if(i >= spotLightsCount)
             break;
-        result += CalcSpotLight(spotLights[i], norm, viewDir);
+        result += CalcSpotLight(spotLights[i], norm, viewDir, specular1, specular2);
     }
 
     FragColor = vec4(result, 1.0);
@@ -112,7 +114,7 @@ void main()
 }  
 
 // calculates the color when using a directional light.
-vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir)
+vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir, float specular1, float specular2)
 {
     vec3 lightDir = normalize(-light.direction);
     // diffuse shading
@@ -122,12 +124,12 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir)
     if (isBlinnPhong)
     {
         vec3 halfwayDir = normalize(lightDir + viewDir);
-	    spec = pow(max(dot(normal, halfwayDir), 0.0), 32.0);
+	    spec = pow(max(dot(normal, halfwayDir), 0.0), specular1);
     }
     else
     {
         vec3 reflectDir = reflect(-lightDir, normal);
-        spec = pow(max(dot(viewDir, reflectDir), 0.0), 32.0);
+        spec = pow(max(dot(viewDir, reflectDir), 0.0), specular2);
     }
     // combine results
     vec3 ambient = light.ambient * light.color * vec3(texture(texture_diffuse1, TexCoords));
@@ -137,7 +139,7 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir)
 }
 
 // calculates the color when using a point light.
-vec3 CalcPointLight(PointLight light, vec3 normal, vec3 viewDir)
+vec3 CalcPointLight(PointLight light, vec3 normal, vec3 viewDir, float specular1, float specular2)
 {
     vec3 lightDir = normalize(light.position - FragPos);
     // diffuse shading
@@ -147,12 +149,12 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 viewDir)
     if (isBlinnPhong)
     {
         vec3 halfwayDir = normalize(lightDir + viewDir);
-	    spec = pow(max(dot(normal, halfwayDir), 0.0), 32.0);
+	    spec = pow(max(dot(normal, halfwayDir), 0.0), specular1);
     }
     else
     {
         vec3 reflectDir = reflect(-lightDir, normal);
-        spec = pow(max(dot(viewDir, reflectDir), 0.0), 32.0);
+        spec = pow(max(dot(viewDir, reflectDir), 0.0), specular2);
     }
     // attenuation
     float distance = length(light.position - FragPos);
@@ -169,7 +171,7 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 viewDir)
 }
 
 // calculates the color when using a spot light.
-vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 viewDir)
+vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 viewDir, float specular1, float specular2)
 {
     vec3 lightDir = normalize(light.position - FragPos);
     // diffuse shading
@@ -179,12 +181,12 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 viewDir)
     if (isBlinnPhong)
     {
         vec3 halfwayDir = normalize(lightDir + viewDir);
-	    spec = pow(max(dot(normal, halfwayDir), 0.0), 32.0);
+	    spec = pow(max(dot(normal, halfwayDir), 0.0), specular1);
     }
     else
     {
         vec3 reflectDir = reflect(-lightDir, normal);
-        spec = pow(max(dot(viewDir, reflectDir), 0.0), 32.0);
+        spec = pow(max(dot(viewDir, reflectDir), 0.0), specular2);
     }
     // attenuation
     float distance = length(light.position - FragPos);

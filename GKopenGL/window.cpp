@@ -368,8 +368,8 @@ void AnimateFireTruckSiren(LightenScene* scene, double currentTime)
 	glm::vec3 white = glm::vec3(1.0f);
 	for (int i = offset; i < offset + sirens_count; i += 2)
 	{
-		float red_pow = pow(sin(glm::radians(i * 10.0f + 400.0f * static_cast<float>(currentTime))), 2);
-		float blue_pow = pow(cos(glm::radians(i * 10.0f + 400.0f * static_cast<float>(currentTime))), 2);
+		float red_pow = pow(sin(glm::radians(i * 20.0f + 400.0f * static_cast<float>(currentTime))), 2);
+		float blue_pow = pow(cos(glm::radians(i * 20.0f + 400.0f * static_cast<float>(currentTime))), 2);
 		glm::vec3 red_siren = red * red_pow + white * blue_pow / 1.5f;
 		glm::vec3 blue_siren = blue * blue_pow + white * red_pow / 1.5f;
 		scene->lights[i]->setColor(red_siren);

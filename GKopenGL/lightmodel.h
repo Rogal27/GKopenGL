@@ -17,6 +17,7 @@ public:
     LightMesh mesh;
 
     LightModel(std::string path);
+    LightModel();
     LightModel(LightModel* model);
     ~LightModel();
     void Draw(Shader& shader);
@@ -34,6 +35,7 @@ public:
 private:
     glm::mat4 modelMatrix;
     glm::mat4 positionMatrix;
+    bool initialized;
 
     void loadModel(std::string path);
     void processNode(aiNode* node, const aiScene* scene);

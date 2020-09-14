@@ -54,6 +54,8 @@ void AnimateRunwayLines(LightenScene* scene, double currentTime);
 void AnimateFireTruckSiren(LightenScene* scene, double currentTime);
 void AnimateFireTruckSelfDriving(LightenScene* scene, double currentTime);
 void FollowFireTruckSelfDrivingStaticCamera(LightenScene* scene);
+void FollowFireTruckSelfDrivingMovingCamera(LightenScene* scene);
+void MoveLightSpotWithCamera5(LightenScene* scene);
 
 
 int main()
@@ -123,9 +125,8 @@ int main()
 		AnimateFireTruckSelfDriving(mainScene, currentFrame);
 		//follow truck with static camera
 		FollowFireTruckSelfDrivingStaticCamera(mainScene);
-
-
-
+		//move light spot with camera5
+		MoveLightSpotWithCamera5(mainScene);
 
 		//move light
 	   /* lightPos.x = 1.0f + sin(glfwGetTime()) * 2.0f;
@@ -456,8 +457,8 @@ void AnimateRunwayLines(LightenScene* scene, double currentTime)
 	for (int i = offset; i < offset + lights_count; i+=2)
 	{
 		glm::vec3 color = orange * (sin(glm::radians(i * 10.0f + 150.0f * static_cast<float>(currentTime))) + 1.3f) / 2.0f;
-		scene->lights[i]->setColor(color);
-		scene->lights[i + 1]->setColor(color);
+		scene->lights[2 * offset + lights_count - i - 1]->setColor(color);
+		scene->lights[2 * offset + lights_count - i - 2]->setColor(color);
 	}
 }
 
@@ -494,11 +495,12 @@ void AnimateFireTruckSelfDriving(LightenScene* scene, double currentTime)
 	for (int i = offset; i < offset + lights_count; i++)
 	{
 		SpotLight* light = dynamic_cast<SpotLight*>(scene->lights[i]);
-		glm::vec3 pos = light->getPosition();
-		glm::vec3 dir = light->getDirection();
-		light->setPosition(glm::vec3(rotation * glm::vec4(pos, 0.0f)));
+		//glm::vec3 pos = light->getPosition();
+		//glm::vec3 dir = light->getDirection();
+		//light->setPosition(glm::vec3(rotation * glm::vec4(pos, 0.0f)));
 		light->model.SetModelMatrix(rotation);		
 	}
+	FollowFireTruckSelfDrivingMovingCamera(mainScene);
 }
 
 void FollowFireTruckSelfDrivingStaticCamera(LightenScene* scene)
@@ -509,4 +511,30 @@ void FollowFireTruckSelfDrivingStaticCamera(LightenScene* scene)
 	glm::vec3 target_pos = glm::vec3(truck->GetModelMatrix() * truck->GetPositionMatrix() * glm::vec4(truck->GetFirstPoint(), 1.0f));
 
 	follow->ChangeTarget(target_pos);
+}
+
+void FollowFireTruckSelfDrivingMovingCamera(LightenScene* scene)
+{
+	Model* truck = scene->models[1];
+	Camera* follow = scene->cameras[3];
+
+	glm::mat4 rotation = truck->GetModelMatrix() * truck->GetPositionMatrix();
+
+	glm::vec3 target_pos = glm::vec3(rotation * glm::vec4(truck->GetFirstPoint(), 1.0f));
+
+	glm::vec3 truck_point = glm::vec3(truck->GetPositionMatrix() * glm::vec4(truck->GetFirstPoint(), 1.0f));
+
+	glm::vec3 camera_pos = glm::vec3(0.0f, 5.0f, 20.0f) + truck_point;
+	camera_pos = glm::vec3(truck->GetModelMatrix() * glm::vec4(camera_pos, 1.0f));
+
+	follow->FollowObject(target_pos, target_pos - camera_pos);
+}
+
+void MoveLightSpotWithCamera5(LightenScene* scene)
+{
+	int offset = 27;
+	Camera* camera = scene->cameras[4];
+	SpotLight* light = dynamic_cast<SpotLight*>(scene->lights[offset]);
+	light->setPosition(camera->GetPosition());
+	light->setDirection(camera->GetFront());
 }

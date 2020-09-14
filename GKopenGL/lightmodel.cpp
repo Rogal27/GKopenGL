@@ -9,12 +9,13 @@
 
 using namespace std;
 
-LightModel::LightModel(string path)
+LightModel::LightModel(string path) : modelMatrix(1.0f), positionMatrix(1.0f), initialized(true)
 {
-	modelMatrix = glm::mat4(1.0f);
-	positionMatrix = glm::mat4(1.0f);
-
 	loadModel(path);
+}
+
+LightModel::LightModel() : modelMatrix(1.0f), positionMatrix(1.0f), initialized(false)
+{
 }
 
 LightModel::LightModel(LightModel* model)
@@ -22,18 +23,21 @@ LightModel::LightModel(LightModel* model)
 	this->modelMatrix = model->modelMatrix;
 	this->positionMatrix = model->positionMatrix;
 	this->mesh = model->mesh;
+	this->initialized = model->initialized;
 }
 
 LightModel::~LightModel()
 {
-	mesh.DeleteMesh();
+	if (initialized)
+		mesh.DeleteMesh();
 }
 
 void LightModel::Draw(Shader& shader)
 {
 	shader.setMat4("model", modelMatrix * positionMatrix);
 
-	mesh.Draw(shader);
+	if (initialized)
+		mesh.Draw(shader);
 }
 
 void LightModel::SetModelMatrix(glm::mat4 model)
@@ -73,17 +77,20 @@ void LightModel::Rotate(float angle, glm::vec3 axis)
 
 glm::vec3 LightModel::GetFirstPoint()
 {
+	if (!initialized) return glm::vec3(0.0f);
 	return mesh.vertices[0];
 }
 
 glm::vec3 LightModel::GetCenter()
 {
+	if (!initialized) return glm::vec3(0.0f);
 	const auto [min, max] = CalculateModelBoundaries();
 	return glm::vec3((max.x + min.x) / 2.0f, (max.y + min.y) / 2.0f, (max.z + min.z) / 2.0f);
 }
 
 std::pair<glm::vec3, glm::vec3> LightModel::CalculateModelBoundaries()
 {
+	if (!initialized) return std::make_pair(glm::vec3(0.0f), glm::vec3(0.0f));
 	const auto get_minmax = [&](auto selector) {
 		return std::minmax_element(mesh.vertices.rbegin(), mesh.vertices.rend(), [selector](const auto& p1, const auto& p2) { return selector(p1) < selector(p2); });
 	};

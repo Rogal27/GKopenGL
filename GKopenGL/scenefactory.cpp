@@ -61,46 +61,25 @@ LightenScene* SceneFactory::MainLightenScene()
 	Camera* camera1 = new Camera(glm::vec3(80.0f, 20.0f, 10.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	Camera* camera2 = new MoveableCamera(glm::vec3(0.0f, 2.0f, 0.0f));
 	Camera* camera3 = new Camera(glm::vec3(10.0f, 20.0f, 50.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	Camera* camera4 = new Camera(glm::vec3(10.0f, 20.0f, 50.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	Camera* camera5 = new MoveableCamera(glm::vec3(10.0f, 2.0f, -30.0f));
 
 	scene->AddCamera(camera1);
 	scene->AddCamera(camera2);
 	scene->AddCamera(camera3);
+	scene->AddCamera(camera4);
+	scene->AddCamera(camera5);
 
-	//light
-	glm::vec3 lightPos1(8.0f, 1.0f, 5.0f);
-	glm::vec3 lightPos2(8.0f, 1.0f, 10.0f);
-	glm::vec3 lightPos3(8.0f, 1.0f, 15.0f);
-	glm::vec3 lightPos4(-0.2f, -1.0f, -0.3f);
-
-	//Point Lights
+	//Point And Spot Lights pointers
 	PointLight* pointLight;
 	SpotLight* spotLight;
 
-	Light* light_point1 = new PointLight(modelPath::cubeModelPath);
-	light_point1->setColor(glm::vec3(1.0f, 0.0f, 0.0f));
-
-	pointLight = dynamic_cast<PointLight*>(light_point1);
-	pointLight->model.SetPositionMatrix(glm::translate(pointLight->model.GetPositionMatrix(), lightPos1));
-	pointLight->model.SetPositionMatrix(glm::scale(pointLight->model.GetPositionMatrix(), glm::vec3(0.2f)));
-
-	Light* light_point2 = new PointLight(modelPath::cubeModelPath);
-	light_point2->setColor(glm::vec3(0.0f, 1.0f, 0.0f));
-	pointLight = dynamic_cast<PointLight*>(light_point2);
-	pointLight->model.SetPositionMatrix(glm::translate(pointLight->model.GetPositionMatrix(), lightPos2));
-	pointLight->model.SetPositionMatrix(glm::scale(pointLight->model.GetPositionMatrix(), glm::vec3(0.2f)));
-
-	Light* light_point3 = new PointLight(modelPath::cubeModelPath);
-	light_point3->setColor(glm::vec3(0.0f, 0.0f, 1.0f));
-	pointLight = dynamic_cast<PointLight*>(light_point3);
-	pointLight->model.SetPositionMatrix(glm::translate(pointLight->model.GetPositionMatrix(), lightPos3));
-	pointLight->model.SetPositionMatrix(glm::scale(pointLight->model.GetPositionMatrix(), glm::vec3(0.2f)));
-
 	//FIRST LIGHT --------------------------------------------------------------------------------------------------------
-	//Directional Lights
-	Light* light_dir = new DirectLight(lightPos4);
+	//Directional Lights | offset = 0
+	Light* light_dir = new DirectLight(glm::vec3(-0.2f, -1.0f, -0.3f));
 	scene->AddLight(light_dir, LightType::Directional);
 
-	//runway
+	//runway | offset = 1
 	const int pointLights_size = 16;
 	Light* pointLights[pointLights_size];
 	for (int i = 0; i < pointLights_size; i+=2)
@@ -123,7 +102,7 @@ LightenScene* SceneFactory::MainLightenScene()
 		scene->AddLight(pointLights[i + 1], LightType::Point);
 	}
 
-	//firetruck siren lights - truck 1
+	//firetruck siren lights - truck 1 | offset = 17
 	Light* truckPointLight1 = new PointLight(modelPath::cubeModelPath);
 	truckPointLight1->setColor(glm::vec3(1.0f, 0.0f, 0.0f));
 
@@ -157,7 +136,7 @@ LightenScene* SceneFactory::MainLightenScene()
 	scene->AddLight(truckPointLight3, LightType::Point);
 	scene->AddLight(truckPointLight4, LightType::Point);
 
-	//firetruck with sirens -  reflectors- for truck1
+	//firetruck with sirens -  reflectors- for truck1 | offset = 21
 	SpotLight* truckSpotLight1 = new SpotLight(modelPath::cubeModelPath, glm::normalize(glm::vec3(-1.0f, -0.1f, 0.0f)));
 	truckSpotLight1->setColor(glm::vec3(1.0f, 0.89f, 0.6f));
 
@@ -175,15 +154,15 @@ LightenScene* SceneFactory::MainLightenScene()
 	scene->AddLight(truckSpotLight1, LightType::SpotLight);
 	scene->AddLight(truckSpotLight2, LightType::SpotLight);
 
-	//firetruck  -  reflectors - for truck2
-	SpotLight* truckSpotLight3 = new SpotLight(modelPath::cubeModelPath, glm::normalize(glm::vec3(0.0f, -0.1f, -1.0f)));
+	//firetruck  -  reflectors - for truck2 | offset = 23
+	SpotLight* truckSpotLight3 = new SpotLight(modelPath::cubeModelPath, glm::normalize(glm::vec3(0.0f, -0.1f, -1.0f)), 30.0f, 40.0f, 1.0f, 0.01f, 0.001f);
 	truckSpotLight3->setColor(glm::vec3(1.0f, 0.89f, 0.6f));
 
 	spotLight = dynamic_cast<SpotLight*>(truckSpotLight3);
 	spotLight->model.SetPositionMatrix(glm::translate(spotLight->model.GetPositionMatrix(), glm::vec3(-3.87f, 1.5f, 14.52f)));
 	spotLight->model.SetPositionMatrix(glm::scale(spotLight->model.GetPositionMatrix(), glm::vec3(0.1f)));
 
-	SpotLight* truckSpotLight4 = new SpotLight(modelPath::cubeModelPath, glm::normalize(glm::vec3(0.0f, -0.1f, -1.0f)));
+	SpotLight* truckSpotLight4 = new SpotLight(modelPath::cubeModelPath, glm::normalize(glm::vec3(0.0f, -0.1f, -1.0f)), 30.0f, 40.0f, 1.0f, 0.01f, 0.001f);
 	truckSpotLight4->setColor(glm::vec3(1.0f, 0.89f, 0.6f));
 
 	spotLight = dynamic_cast<SpotLight*>(truckSpotLight4);
@@ -193,7 +172,7 @@ LightenScene* SceneFactory::MainLightenScene()
 	scene->AddLight(truckSpotLight3, LightType::SpotLight);
 	scene->AddLight(truckSpotLight4, LightType::SpotLight);
 
-	//firetruck  -  reflectors - for truck3
+	//firetruck  -  reflectors - for truck3 | offset = 25
 	SpotLight* truckSpotLight5 = new SpotLight(modelPath::cubeModelPath, glm::normalize(glm::vec3(0.0f, -0.1f, -1.0f)));
 	truckSpotLight5->setColor(glm::vec3(1.0f, 0.89f, 0.6f));
 
@@ -211,32 +190,44 @@ LightenScene* SceneFactory::MainLightenScene()
 	scene->AddLight(truckSpotLight5, LightType::SpotLight);
 	scene->AddLight(truckSpotLight6, LightType::SpotLight);
 
-	/*Light* light_point3 = new PointLight(modelPath::cubeModelPath, lightPos3);
+	//Camera spot Lights offset = 0 | offset = 27
+	SpotLight* cameraLightSpot = new SpotLight(modelPath::cubeModelPath, camera5->GetFront(), 12.5f, 20.0f);
+	spotLight = dynamic_cast<SpotLight*>(cameraLightSpot);
+	spotLight->model.SetPositionMatrix(glm::translate(spotLight->model.GetPositionMatrix(), glm::vec3(camera5->GetPosition())));
+	spotLight->model.SetPositionMatrix(glm::scale(spotLight->model.GetPositionMatrix(), glm::vec3(0.04f)));
+	//spotLight->setPosition(camera5->GetPosition());
+	scene->AddLight(cameraLightSpot, LightType::SpotLight);
+	
+	//Three lights | offset = 28
+	Light* light_point1 = new PointLight(modelPath::cubeModelPath);
+	light_point1->setColor(glm::vec3(1.0f, 0.0f, 0.0f));
+
+	pointLight = dynamic_cast<PointLight*>(light_point1);
+	pointLight->model.SetPositionMatrix(glm::translate(pointLight->model.GetPositionMatrix(), glm::vec3(8.0f, 1.0f, 5.0f)));
+	pointLight->model.SetPositionMatrix(glm::scale(pointLight->model.GetPositionMatrix(), glm::vec3(0.2f)));
+
+	Light* light_point2 = new PointLight(modelPath::cubeModelPath);
+	light_point2->setColor(glm::vec3(0.0f, 1.0f, 0.0f));
+	pointLight = dynamic_cast<PointLight*>(light_point2);
+	pointLight->model.SetPositionMatrix(glm::translate(pointLight->model.GetPositionMatrix(), glm::vec3(8.0f, 1.0f, 10.0f)));
+	pointLight->model.SetPositionMatrix(glm::scale(pointLight->model.GetPositionMatrix(), glm::vec3(0.2f)));
+
+	Light* light_point3 = new PointLight(modelPath::cubeModelPath);
 	light_point3->setColor(glm::vec3(0.0f, 0.0f, 1.0f));
 	pointLight = dynamic_cast<PointLight*>(light_point3);
-	pointLight->model.SetPositionMatrix(glm::scale(pointLight->model.GetPositionMatrix(), glm::vec3(0.2f)));*/
+	pointLight->model.SetPositionMatrix(glm::translate(pointLight->model.GetPositionMatrix(), glm::vec3(8.0f, 1.0f, 15.0f)));
+	pointLight->model.SetPositionMatrix(glm::scale(pointLight->model.GetPositionMatrix(), glm::vec3(0.2f)));
 
-
-	//Spot Lights
-
-	//SpotLight light_spot(camera2.GetPosition(), camera2.GetFront());
-
-	
-	//light_dir->setColor(glm::vec3(0.0f, 1.0f, 1.0f));
-
-
-	//add lights to scene
 	scene->AddLight(light_point1, LightType::Point);
 	scene->AddLight(light_point2, LightType::Point);
 	scene->AddLight(light_point3, LightType::Point);
-	//scene->AddLight(light_spot, LightType::Spot);
 	
 
 	//models
 	Model* sphere1 = LoadModel(modelPath::sphere1ModelPath);
 	Model* sphere2 = LoadModel(modelPath::sphere1ModelPath);
 	Model* wall = LoadModel(modelPath::grayCubeModelPath);
-	Model* boeingKLM = nullptr;//LoadModel(modelPath::boeingKLMModelPath);
+	Model* boeingKLM = LoadModel(modelPath::boeingKLMModelPath);
 	Model* boeingFiji = LoadModel(modelPath::boeingFijiModelPath);
 	Model* fireTruck1 = LoadModel(modelPath::fireTruckModelPath);
 	Model* fireTruck2 = LoadModel(modelPath::fireTruckModelPath);
@@ -298,8 +289,10 @@ LightenScene* SceneFactory::MainLightenScene()
 	if (boeingKLM)
 	{
 		glm::mat4 matrix = glm::mat4(1.0f);
-		matrix = glm::translate(matrix, glm::vec3(10.0f, -3.0f, 0.0f));
+		matrix = glm::translate(matrix, glm::vec3(-32.0f, 2.0f, 20.0f));
 		matrix = glm::translate(matrix, boeingKLM->GetFirstPoint());
+
+		matrix = glm::rotate(matrix, glm::radians(-6.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
 		matrix = glm::scale(matrix, glm::vec3(0.7f));
 		
@@ -311,7 +304,7 @@ LightenScene* SceneFactory::MainLightenScene()
 	if (boeingFiji)
 	{
 		glm::mat4 matrix = glm::mat4(1.0f);
-		matrix = glm::translate(matrix, glm::vec3(-32.0f, 1.0f, 0.0f));
+		matrix = glm::translate(matrix, glm::vec3(-32.0f, 20.0f, -70.0f));
 		matrix = glm::translate(matrix, boeingFiji->GetFirstPoint());
 
 		matrix = glm::scale(matrix, glm::vec3(0.7f));

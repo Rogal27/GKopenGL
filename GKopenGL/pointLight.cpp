@@ -12,6 +12,11 @@ PointLight::PointLight(std::string model_path, float _constant, float _linear, f
 	position = model.GetCenter();
 }
 
+PointLight::PointLight(float _constant, float _linear, float _quadratic, vec3 _color, vec3 _ambient, vec3 _diffuse, vec3 _specular) :
+	Light(_color, _ambient, _diffuse, _specular), position(0.0f), constant(_constant), linear(_linear), quadratic(_quadratic), model()
+{
+}
+
 void PointLight::setPosition(vec3 _position)
 {
 	//model.Translate(_position - position);

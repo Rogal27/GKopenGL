@@ -50,9 +50,9 @@ void Model::Draw(Shader& shader)
         int scale = 5;
         float size = 2.0f;
         glm::mat4 modelMatrixClone = modelMatrix;
-        for (int x = -15; x < 10; x++)
+        for (int x = -20; x < 20; x++)
         {
-            for (int y = -10; y < 10; y++)
+            for (int y = -20; y < 20; y++)
             {
                 modelMatrixClone = modelMatrix;
                 

@@ -14,10 +14,18 @@ SpotLight::SpotLight(std::string model_path, vec3 _direction, float _cutOff, flo
 	position = model.GetCenter();
 }
 
+SpotLight::SpotLight(vec3 _direction, float _cutOff, float _outerCutOff, float _constant, float _linear, float _quadratic, vec3 _color, vec3 _ambient, vec3 _diffuse, vec3 _specular):
+	Light(_color, _ambient, _diffuse, _specular), position(0.0f), direction(_direction), constant(_constant), linear(_linear), quadratic(_quadratic), model()
+{
+	setCutOff(_cutOff);
+	setOuterCutOff(_outerCutOff);
+}
+
 void SpotLight::setPosition(vec3 _position)
 {
-	//model.Translate(_position - position);
-	position = _position;
+	glm::vec3 lastPos = glm::vec3(model.GetModelMatrix() * model.GetPositionMatrix() * glm::vec4(position, 1.0f));
+	model.Translate(_position - lastPos);
+	//position = _position;
 }
 
 void SpotLight::setPosition(float x, float y, float z)
@@ -27,7 +35,7 @@ void SpotLight::setPosition(float x, float y, float z)
 
 void SpotLight::setDirection(vec3 _direction)
 {
-	direction = _direction;
+	direction = glm::vec3(glm::inverse(model.GetPositionMatrix()) * glm::inverse(model.GetModelMatrix()) * glm::vec4(_direction, 0.0f));
 }
 
 void SpotLight::setDirection(float x, float y, float z)

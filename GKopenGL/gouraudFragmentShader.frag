@@ -8,4 +8,4 @@ in vec3 LightingColor;
 void main()
 {
     FragColor = vec4(LightingColor * objectColor, 1.0);
-}  
+}

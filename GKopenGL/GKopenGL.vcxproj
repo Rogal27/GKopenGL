@@ -190,6 +190,7 @@
     <ClInclude Include="stb_image.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="blinnFragmentShader.frag" />
     <None Include="gouraudFragmentShader.frag" />
     <None Include="gouraudVertexShader.vert" />
     <None Include="modelFragmentShader.frag" />

@@ -7,6 +7,7 @@ enum class ShaderType
     phong,
     gouraud,
     light,
+    blinn,
     simpleModel
 };
 
@@ -26,7 +27,7 @@ private:
 
     Shader phongShader;
     Shader gouraudShader;
-    //Shader blinnShader;
+    Shader blinnShader;
     Shader lightShader;
     Shader simpleModel;
 

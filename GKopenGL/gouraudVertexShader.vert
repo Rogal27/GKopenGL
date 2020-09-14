@@ -19,7 +19,6 @@ void main()
     vec3 Normal = NormalMatrix * aNormal;
     vec3 LightPos = vec3(view * vec4(lightPos, 1.0));
 
-
     // ambient
     float ambientStrength = 0.1;
     vec3 ambient = ambientStrength * lightColor;
@@ -42,4 +41,4 @@ void main()
     vec3 specular = specularStrength * spec * lightColor; 
             
     LightingColor = ambient + diffuse + specular;
-} 
+}

@@ -42,7 +42,7 @@ double deltaTime = 0.0f;	// Time between current frame and last frame
 double lastFrame = 0.0f; // Time of last frame
 
 //shader type
-//0-phong, 1-gouraud
+//0-phong, 1-blinn, 2-gouraud
 int shader_type = 0;
 
 //prototypes
@@ -237,13 +237,17 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		mainScene->SwitchShader();
 
 		shader_type++;
-		shader_type %= 2;
+		shader_type %= 3;
 
 		if (shader_type == 0)
 		{
 			cout << "Phong shading" << endl;
 		}
 		else if (shader_type == 1)
+		{
+			cout << "Blinn shading" << endl;
+		}
+		else if (shader_type == 2)
 		{
 			cout << "Gouraud shading" << endl;
 		}
@@ -259,10 +263,6 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		if (mainScene == nullptr)
 			return;
 		mainScene->SwitchFog();
-	}
-	if (key == GLFW_KEY_B && action == GLFW_PRESS)
-	{
-		;
 	}
 }
 
